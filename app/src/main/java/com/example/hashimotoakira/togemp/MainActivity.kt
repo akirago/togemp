@@ -2,6 +2,8 @@ package com.example.hashimotoakira.togemp
 
 import android.Manifest
 import android.os.Bundle
+import android.os.Handler
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.example.hashimotoakira.togemp.util.*
 import com.google.android.gms.nearby.Nearby
@@ -30,7 +32,7 @@ class MainActivity : AppCompatActivity() {
             endpointIds.add(endpointId)
             logD("onEndpointFound  endpointID = $endpointId")
             discoveredEndpoints[endpointId] = discoveredEndpointInfo
-            requestConnectionButton.isEnabled = true
+            requestConnection0Button.isEnabled = true
         }
 
         override fun onEndpointLost(endpointId: String) {
@@ -50,7 +52,11 @@ class MainActivity : AppCompatActivity() {
             name = connectionInfo.endpointName
             token = connectionInfo.authenticationToken
             logD("connectionLifecycleCallback onConnectionInitiated endpointId = $endpointId connectionInfo = $connectionInfo name = $name token = $token")
-            acceptButton.isEnabled = true
+            accept0Button.isEnabled = true
+            textView2.visibility = View.VISIBLE
+            Handler().postDelayed({
+                textView2.visibility = View.INVISIBLE
+            }, 1000)
         }
 
         override fun onConnectionResult(endpointId: String, result: ConnectionResolution) {
@@ -69,13 +75,17 @@ class MainActivity : AppCompatActivity() {
         }
 
         override fun onPayloadReceived(endpointId: String, payload: Payload) {
-            payloadText.text = String(payload.asBytes()!!)
+            String(payload.asBytes()!!).also {
+                payloadText.text = it
+                endpointIds.add(it)
+                textView2.visibility = View.VISIBLE
+                Handler().postDelayed({
+                    textView2.visibility = View.INVISIBLE
+                }, 1000)
+            }
         }
 
     }
-
-    var idCount = 0
-    var idCount2 = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -86,25 +96,37 @@ class MainActivity : AppCompatActivity() {
         discoveringButton.setOnClickListener {
             startDiscoveryWithPermissionCheck(endpointDiscoveryCallback)
         }
-        requestConnectionButton.setOnClickListener {
-            logD("onEndpointFound  endpointID = ${endpointIds[idCount]}")
+        requestConnection0Button.setOnClickListener {
+            logD("requestConnection  endpointID = ${endpointIds[0]}")
 
             requestConnection(
                     this,
                     packageName,
-                    endpointIds[idCount],
+                    endpointIds[0],
                     connectionLifecycleCallback)
-            idCount++
         }
-        acceptButton.setOnClickListener {
-            acceptConnections(this, endpointIds[idCount2], payloadCallback)
-            idCount2++
+        requestConnection1Button.setOnClickListener {
+            logD("requestConnection  endpointID = ${endpointIds[1]}")
+
+            requestConnection(
+                    this,
+                    packageName,
+                    endpointIds[1],
+                    connectionLifecycleCallback)
+        }
+        accept0Button.setOnClickListener {
+            acceptConnections(this, endpointIds[0], payloadCallback)
+            logD("acceptConnections  endpointID = ${endpointIds[0]}")
+        }
+        accept1Button.setOnClickListener {
+            acceptConnections(this, endpointIds[1], payloadCallback)
+            logD("acceptConnections  endpointID = ${endpointIds[1]}")
         }
         sendPayload0Button.setOnClickListener {
-            sendPayload(this, endpointIds[0], "good morning")
+            sendPayload(this, endpointIds[0], endpointIds[1])
         }
         sendPayload1Button.setOnClickListener {
-            sendPayload(this, endpointIds[1], "good night")
+            sendPayload(this, endpointIds[1], endpointIds[0])
         }
     }
 

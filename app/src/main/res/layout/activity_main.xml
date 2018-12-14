@@ -23,35 +23,35 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="startDiscovering"
-        app:layout_constraintBottom_toTopOf="@+id/acceptButton"
+        app:layout_constraintBottom_toTopOf="@+id/accept0Button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/advertisingButton" />
 
     <Button
-        android:id="@+id/acceptButton"
+        android:id="@+id/accept0Button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:enabled="false"
         android:text="startAcceptConnection"
-        app:layout_constraintBottom_toTopOf="@+id/requestConnectionButton"
+        app:layout_constraintBottom_toTopOf="@+id/accept1Button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/discoveringButton" />
 
     <Button
-        android:id="@+id/requestConnectionButton"
+        android:id="@+id/requestConnection0Button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:enabled="false"
-        android:text="requestConnection"
-        app:layout_constraintBottom_toTopOf="@+id/sendPayload0Button"
+        android:text="requestConnection0"
+        app:layout_constraintBottom_toTopOf="@+id/requestConnection1Button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/acceptButton" />
+        app:layout_constraintTop_toBottomOf="@+id/accept1Button" />
 
     <Button
         android:id="@+id/sendPayload0Button"
@@ -62,7 +62,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/requestConnectionButton" />
+        app:layout_constraintTop_toBottomOf="@+id/requestConnection1Button" />
 
     <TextView
         android:id="@+id/payloadText"
@@ -85,6 +85,39 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/sendPayload0Button" />
+
+    <Button
+        android:id="@+id/requestConnection1Button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="requestConnection1"
+        app:layout_constraintBottom_toTopOf="@+id/sendPayload0Button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/requestConnection0Button" />
+
+    <Button
+        android:id="@+id/accept1Button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="accept1"
+        app:layout_constraintBottom_toTopOf="@+id/requestConnection0Button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/accept0Button" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:visibility="invisible"
+        android:text="get!!!"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
