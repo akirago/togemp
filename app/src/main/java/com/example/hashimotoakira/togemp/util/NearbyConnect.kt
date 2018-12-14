@@ -71,10 +71,12 @@ fun rejectConnections(activityContext: Context,
 fun sendPayload(activityContext: Context,
                 toEndpointId: String,
                 message: String) {
-    logD("sendPayload endPointId = $toEndpointId")
-
     Nearby.getConnectionsClient(activityContext).sendPayload(
             toEndpointId,
             Payload.fromBytes(message.toByteArray())
-    )
+    ).addOnSuccessListener {
+        logD("sendPayload endPointId = $toEndpointId Succeeded")
+    }.addOnFailureListener {
+        logD("sendPayload endPointId = $toEndpointId Failed $it")
+    }
 }

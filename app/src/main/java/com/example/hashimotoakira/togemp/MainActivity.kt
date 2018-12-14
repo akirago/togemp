@@ -1,9 +1,10 @@
 package com.example.hashimotoakira.togemp
 
 import android.Manifest
+import android.content.DialogInterface
+import android.os.Build
 import android.os.Bundle
-import android.os.Handler
-import android.view.View
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.example.hashimotoakira.togemp.util.*
 import com.google.android.gms.nearby.Nearby
@@ -17,12 +18,20 @@ import permissions.dispatcher.RuntimePermissions
 @RuntimePermissions
 class MainActivity : AppCompatActivity() {
 
-    lateinit var token: String
-    lateinit var name: String
+    // 親と子の判定が必要なので追加
+    private var isParent = false
 
+    private var parentId = ""
+
+    private var participantNumber = 0
+
+    private var connectedDeviceCount = 1
+
+    /**
+     * String: endpointId
+     * Boolean: endpointIdの端末と通信の許可が取れているかどうか
+     */
     val endpointIds = mutableListOf<String>()
-
-    private val discoveredEndpoints = HashMap<String, DiscoveredEndpointInfo>()
 
     // 検出の応答が返って来た際に呼ばれるコールバック
     private val endpointDiscoveryCallback = object : EndpointDiscoveryCallback() {
@@ -31,15 +40,17 @@ class MainActivity : AppCompatActivity() {
             // 端末を検出した
             endpointIds.add(endpointId)
             logD("onEndpointFound  endpointID = $endpointId")
-            discoveredEndpoints[endpointId] = discoveredEndpointInfo
-            requestConnection0Button.isEnabled = true
+            requestConnection(
+                    this@MainActivity,
+                    packageName,
+                    endpointId,
+                    connectionLifecycleCallback)
         }
 
         override fun onEndpointLost(endpointId: String) {
             // 検出済みの端末を見失った
-            // TODO endpointIdsで対応したものを消去する
+            // TODO endpointIdsで対応したものを消去する?
             logD("onEndpointLost  endpointID = $endpointId")
-            discoveredEndpoints.remove(endpointId)
         }
     }
 
@@ -47,20 +58,27 @@ class MainActivity : AppCompatActivity() {
     private val connectionLifecycleCallback = object : ConnectionLifecycleCallback() {
         // requestConnectionの後に呼ばれる
         override fun onConnectionInitiated(endpointId: String, connectionInfo: ConnectionInfo) {
-            endpointIds.add(endpointId)
-
-            name = connectionInfo.endpointName
-            token = connectionInfo.authenticationToken
-            logD("connectionLifecycleCallback onConnectionInitiated endpointId = $endpointId connectionInfo = $connectionInfo name = $name token = $token")
-            accept0Button.isEnabled = true
-            textView2.visibility = View.VISIBLE
-            Handler().postDelayed({
-                textView2.visibility = View.INVISIBLE
-            }, 1000)
+            logD("connectionLifecycleCallback onConnectionInitiated endpointId = $endpointId ")
+            if (!isParent) {
+                parentId = endpointId
+            }
+            acceptConnections(this@MainActivity, endpointId, payloadCallback)
         }
 
         override fun onConnectionResult(endpointId: String, result: ConnectionResolution) {
-            logD("connectionLifecycleCallback onConnectionResult ${result.status.statusCode}")
+            logD("connectionLifecycleCallback onConnectionResult: $connectedDeviceCount ${result.status.statusCode}")
+            if (isParent) {
+                connectedDeviceCount++
+                if (connectedDeviceCount == participantNumber) {
+                    logD("connectionLifecycleCallback onConnectionResult sendPayload")
+                    endpointIds.forEach { toEndpointId ->
+                        sendPayload(this@MainActivity,
+                                toEndpointId,
+                                "start")
+                    }
+                }
+
+            }
         }
 
         override fun onDisconnected(endpointId: String) {
@@ -68,7 +86,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    //
     private val payloadCallback = object : PayloadCallback() {
         override fun onPayloadTransferUpdate(endpointId: String, payload: PayloadTransferUpdate) {
             logD(endpointId)
@@ -76,12 +93,12 @@ class MainActivity : AppCompatActivity() {
 
         override fun onPayloadReceived(endpointId: String, payload: Payload) {
             String(payload.asBytes()!!).also {
-                payloadText.text = it
-                endpointIds.add(it)
-                textView2.visibility = View.VISIBLE
-                Handler().postDelayed({
-                    textView2.visibility = View.INVISIBLE
-                }, 1000)
+                if (it == "start") { // 親がコネクション完了通知で、子が子同士通信するためにrequestする流れ
+                    logD("onPayloadReceived $endpointId")
+                    // getCard()
+                } else {
+                    showToast(this@MainActivity, it)
+                }
             }
         }
 
@@ -90,43 +107,34 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        advertisingButton.setOnClickListener {
+        makeRoom.setOnClickListener {
+            isParent = true
+            AlertDialog.Builder(this)
+                    .setTitle("何人参加しますか")
+                    .setItems(arrayOf("2", "3", "4", "5")) { _: DialogInterface, i: Int ->
+                        participantNumber = i + 2
+                        startDiscoveryWithPermissionCheck(endpointDiscoveryCallback)
+                    }
+                    .create().show()
+        }
+        enterRoom.setOnClickListener {
             startAdvertisingWithPermissionCheck(connectionLifecycleCallback)
         }
-        discoveringButton.setOnClickListener {
-            startDiscoveryWithPermissionCheck(endpointDiscoveryCallback)
-        }
-        requestConnection0Button.setOnClickListener {
-            logD("requestConnection  endpointID = ${endpointIds[0]}")
-
-            requestConnection(
-                    this,
-                    packageName,
-                    endpointIds[0],
-                    connectionLifecycleCallback)
-        }
-        requestConnection1Button.setOnClickListener {
-            logD("requestConnection  endpointID = ${endpointIds[1]}")
-
-            requestConnection(
-                    this,
-                    packageName,
-                    endpointIds[1],
-                    connectionLifecycleCallback)
-        }
-        accept0Button.setOnClickListener {
-            acceptConnections(this, endpointIds[0], payloadCallback)
-            logD("acceptConnections  endpointID = ${endpointIds[0]}")
-        }
-        accept1Button.setOnClickListener {
-            acceptConnections(this, endpointIds[1], payloadCallback)
-            logD("acceptConnections  endpointID = ${endpointIds[1]}")
-        }
-        sendPayload0Button.setOnClickListener {
-            sendPayload(this, endpointIds[0], endpointIds[1])
-        }
-        sendPayload1Button.setOnClickListener {
-            sendPayload(this, endpointIds[1], endpointIds[0])
+        sendMessage.setOnClickListener {
+            if (isParent) {
+                AlertDialog.Builder(this)
+                        .setTitle("誰にメッセージを送信しますか")
+                        .setItems(endpointIds.toTypedArray()) { dialogInterface: DialogInterface, i: Int ->
+                            sendPayload(this,
+                                    endpointIds[i],
+                                    Build.HARDWARE)
+                        }
+                        .create().show()
+            } else {
+                sendPayload(this,
+                        parentId,
+                        Build.HARDWARE)
+            }
         }
     }
 
@@ -174,7 +182,7 @@ class MainActivity : AppCompatActivity() {
      *
      * @param endpointDiscoveryCallback 検出結果の通知が来た際の処理
      */
-    @NeedsPermission(Manifest.permission.ACCESS_COARSE_LOCATION)
+    @NeedsPermission(Manifest.permission.ACCESS_COARSE_LOCATION) // TODO 初回のハンドリングしないと。許可した後何もできなくなる
     fun startDiscovery(endpointDiscoveryCallback: EndpointDiscoveryCallback) {
         Nearby.getConnectionsClient(this).startDiscovery(
                 packageName,
@@ -188,4 +196,5 @@ class MainActivity : AppCompatActivity() {
                     logD("startDiscovery Failed")
                 }
     }
+
 }

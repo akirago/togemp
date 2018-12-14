@@ -4,120 +4,41 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".MainActivity"
+    tools:layout_editor_absoluteY="73dp">
 
     <Button
-        android:id="@+id/advertisingButton"
+        android:id="@+id/makeRoom"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="startAdvertising"
-        app:layout_constraintBottom_toTopOf="@+id/discoveringButton"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_chainStyle="spread" />
-
-    <Button
-        android:id="@+id/discoveringButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="startDiscovering"
-        app:layout_constraintBottom_toTopOf="@+id/accept0Button"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/advertisingButton" />
-
-    <Button
-        android:id="@+id/accept0Button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:enabled="false"
-        android:text="startAcceptConnection"
-        app:layout_constraintBottom_toTopOf="@+id/accept1Button"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/discoveringButton" />
-
-    <Button
-        android:id="@+id/requestConnection0Button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:enabled="false"
-        android:text="requestConnection0"
-        app:layout_constraintBottom_toTopOf="@+id/requestConnection1Button"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/accept1Button" />
-
-    <Button
-        android:id="@+id/sendPayload0Button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="sendPayload0"
-        app:layout_constraintBottom_toTopOf="@+id/sendPayload1Button"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/requestConnection1Button" />
-
-    <TextView
-        android:id="@+id/payloadText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="getText"
+        android:text="部屋を作る"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/enterRoom"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/sendPayload1Button" />
-
-    <Button
-        android:id="@+id/sendPayload1Button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="sendPayload1"
-        app:layout_constraintBottom_toTopOf="@+id/payloadText"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/sendPayload0Button" />
-
-    <Button
-        android:id="@+id/requestConnection1Button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="requestConnection1"
-        app:layout_constraintBottom_toTopOf="@+id/sendPayload0Button"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/requestConnection0Button" />
-
-    <Button
-        android:id="@+id/accept1Button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="accept1"
-        app:layout_constraintBottom_toTopOf="@+id/requestConnection0Button"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/accept0Button" />
-
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:visibility="invisible"
-        android:text="get!!!"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/enterRoom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="部屋に入る"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/makeRoom"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/sendMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:text="sendMessage"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
