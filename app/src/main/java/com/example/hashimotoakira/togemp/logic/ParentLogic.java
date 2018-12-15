@@ -8,6 +8,9 @@ import java.util.Optional;
 
 // 親が呼ぶロジック
 public class ParentLogic {
+
+    public static final String PARENT_ID = "parent";
+
     public List<PlayerInfo> playerInfoList;
 
     public ParentLogic() {
