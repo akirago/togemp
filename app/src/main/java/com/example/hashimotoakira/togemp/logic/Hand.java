@@ -1,8 +1,8 @@
 package com.example.hashimotoakira.togemp.logic;
 
 public class Hand {
-    public Card card;
-    public int handPosition;
+    private Card card;
+    private int handPosition;
 
     public Hand(Card card, int handPosition) {
         this.card = card;

@@ -62,8 +62,8 @@ public class NoguchiUnitTest {
         ChildLogic childLogic = new ChildLogic();
         childLogic.createHands(myInitialHands);
         System.out.println("\n--------自分の手札--------");
-        childLogic.getHands().forEach(myHand -> {
-            System.out.println( "カード マーク: " + myHand.getCard().suit + " 数字: " + myHand.getCard().number + " 順番: " + myHand.getHandPosition());
+        childLogic.getSortCardList().forEach(card -> {
+            System.out.println( "カード マーク: " + card.suit + " 数字: " + card.number);
         });
 
         System.out.println("\n--------一枚引く--------");
@@ -71,21 +71,29 @@ public class NoguchiUnitTest {
         ArrayList<Card> testCardList = new ArrayList<>();
         testCardList.add(testCard);
         childLogic.receiveCard(testCardList);
-        childLogic.getHands().forEach(myHand -> {
-            System.out.println( "カード マーク: " + myHand.getCard().suit + " 数字: " + myHand.getCard().number + " 順番: " + myHand.getHandPosition());
+        childLogic.getSortCardList().forEach(card -> {
+            System.out.println( "カード マーク: " + card.suit + " 数字: " + card.number);
         });
 
         System.out.println("\n--------一枚渡す--------");
-        List<Card> cards = childLogic.sendCard(childLogic.getHands().size());
-        childLogic.getHands().forEach(myHand -> {
-            System.out.println( "カード マーク: " + myHand.getCard().suit + " 数字: " + myHand.getCard().number + " 順番: " + myHand.getHandPosition());
+        List<Card> cards = childLogic.sendCard(childLogic.getSortCardList().size());
+        childLogic.getSortCardList().forEach(card -> {
+            System.out.println( "カード マーク: " + card.suit + " 数字: " + card.number);
         });
 
 
         System.out.println("\n--------二枚捨てる--------");
-        childLogic.discard(1, 2);
-        childLogic.getHands().forEach(myHand -> {
-            System.out.println( "カード マーク: " + myHand.getCard().suit + " 数字: " + myHand.getCard().number + " 順番: " + myHand.getHandPosition());
+        childLogic.receiveCard(Arrays.asList(new Card("t", 1)));
+        childLogic.receiveCard(Arrays.asList(new Card("t", 1)));
+        System.out.println("\n--------捨てる前--------");
+        childLogic.getSortCardList().forEach(card -> {
+            System.out.println( "カード マーク: " + card.suit + " 数字: " + card.number);
+        });
+        boolean discarded = childLogic.discard(childLogic.getSortCardList().size(), childLogic.getSortCardList().size() - 1);
+        System.out.println("\n--------捨てたあと--------");
+        System.out.println("成功?: " + discarded);
+        childLogic.getSortCardList().forEach(card -> {
+            System.out.println( "カード マーク: " + card.suit + " 数字: " + card.number);
         });
 
         System.out.println("\n--------カードの順番を入れ替える--------");
