@@ -3,10 +3,11 @@ package com.example.hashimotoakira.togemp.logic;
 import java.util.ArrayList;
 import java.util.List;
 
+// 子が呼ぶロジック
 public class ChildLogic {
 
-    public String parentId;
-    public List<Hand> hands;
+    public String parentId; // 親のID
+    public List<Hand> hands; // 手札
 
     public ChildLogic(String parentId) {
         this.parentId = parentId;
@@ -53,12 +54,9 @@ public class ChildLogic {
         }
     }
 
+    // 現在の手札を取得する
     public List<Hand> getHands() {
         return hands;
     }
-
-    public String sendCard(int cardPosition){
-        return null;
-    }
-
+    
 }

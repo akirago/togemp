@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 
-// 親が呼ぶよてい
+// 親が呼ぶロジック
 public class ParentLogic {
     public List<PlayerInfo> playerInfoList;
 
@@ -25,10 +25,5 @@ public class ParentLogic {
         playerInfoList.stream().filter(playerInfo -> id.equals(playerInfo.getId())).forEach(playerInfo -> {
             playerInfo.setPosition(maxPosition + 1);
         });
-    }
-
-    public List<Card> setParentCard() {
-
-        return null; // cardのはいれつ
     }
 }

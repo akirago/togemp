@@ -1,10 +1,11 @@
 package com.example.hashimotoakira.togemp.logic;
 
+// 親が管理する、各プレイヤーの情報
 public class PlayerInfo {
 
-    public String id;
-    public int position;
-    public int cardCount;
+    public String id; // プレイヤーのID、親ならparent
+    public int position; // プレイヤーの位置（＝順番）
+    public int cardCount; // プレイヤーの手札枚数
 
     public String getId() {
         return id;
