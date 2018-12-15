@@ -2,7 +2,12 @@ package com.example.hashimotoakira.togemp.logic;
 
 public class Hand {
     public Card card;
-    public int handPostion;
+    public int handPosition;
+
+    public Hand(Card card, int handPosition) {
+        this.card = card;
+        this.handPosition = handPosition;
+    }
 
     public Card getCard() {
         return card;
@@ -12,12 +17,12 @@ public class Hand {
         this.card = card;
     }
 
-    public int getHandPostion() {
-        return handPostion;
+    public int getHandPosition() {
+        return handPosition;
     }
 
-    public void setHandPostion(int handPostion) {
-        this.handPostion = handPostion;
+    public void setHandPosition(int handPosition) {
+        this.handPosition = handPosition;
     }
 
 }
