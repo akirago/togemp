@@ -259,6 +259,7 @@ class MainActivity : AppCompatActivity() {
     private fun goHandView() {
         dealView.visibility = View.GONE
         cardsView.visibility = View.VISIBLE
+        gameStartButton.visibility = View.VISIBLE
     }
 
     private fun goHandViewByChild() {
@@ -360,11 +361,13 @@ class MainActivity : AppCompatActivity() {
             if (firstPosition == null) {
                 firstPosition = event.position
             } else {
-                if (childLogic.discard(firstPosition!!, event.position)) {
+                if (childLogic.discard(firstPosition!! + 1, event.position + 1)) {
                     setCardsList()
+                    showToast(this, "すてました")
                 } else {
                     showToast(this, "そのカードはそろってないですねー")
                 }
+                firstPosition = null
             }
         }
     }
