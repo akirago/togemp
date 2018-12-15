@@ -158,19 +158,24 @@ public class ParentLogic {
         // ポジションごとに並び替え
         List<PlayerInfo> restPlayerList = playerInfoList.stream().filter(playerInfo -> playerInfo.getCardCount() != 0).sorted(Comparator.comparing(PlayerInfo::getPosition)).collect(Collectors.toList());
         if (restPlayerList.isEmpty()) {
+            logD("getRecievePlayer restPlayerList.isEmpty()");
             return null;
         }
         // 最後の場合は、リストの最初のプレイヤー次のプレイヤー
         if (restPlayerList.get(restPlayerList.size() - 1).isSendCardPlayer()) {
+            logD("getRecievePlayer rrestPlayerList.get");
             return restPlayerList.get(0);
         }
         // それ以外はsendPlayerの次のポジションのplayer
         for (int i = 0; i < restPlayerList.size(); i++) {
             if (restPlayerList.get(i).isSendCardPlayer()) {
+                logD("getRecievePlayer isSendCardPlayer.get");
+
                 return restPlayerList.get(i + 1);
             }
         }
         // ここまで来るロジックはないけど、エディタで警告が出るのでnullを返す
+        logD("getRecievePlayer null");
         return null;
     }
 

@@ -117,12 +117,16 @@ class MainActivity : AppCompatActivity() {
                     logD("onPayloadReceived $endpointId")
                     // getCard()
                 } else {
-                    if (isParent && parentLogic.recievePlayer.id != ParentLogic.PARENT_ID) {
-                        sendPayload(this@MainActivity, parentLogic.recievePlayer.id, it)
-                        return@also
-                    }
 
                     val message = ConnectionMessage.parseStrMsg(it)
+
+                    if (isParent && parentLogic.recievePlayer.id != ParentLogic.PARENT_ID && message.receiverAction == ReceiverAction.GetCard) {
+                        logD("getCurrentReceivePlayer = ${parentLogic.recievePlayer.id}")
+                        sendPayload(this@MainActivity, parentLogic.recievePlayer.id, it)
+                        parentLogic.changeToNextTurn()
+                        logD("getCurrentReceivePlayer = ${parentLogic.recievePlayer.id} after change")
+                        return@also
+                    }
 
                     if (message.receiverAction == ReceiverAction.DealCard) {
                         childLogic.createHands(message.cardList)
@@ -140,10 +144,18 @@ class MainActivity : AppCompatActivity() {
                             parentLogic.changeToNextTurn()
                         }
                         turnEndButton.isEnabled = true
-                    } else if (message.receiverAction == ReceiverAction.TurnChange) {
-                        if (isParent) {
-                            parentLogic.changeToNextTurn()
+                    } else if (message.receiverAction == ReceiverAction.YourTurn) {
+                        turnEndButton.isEnabled = true
+                    } else if (message.receiverAction == ReceiverAction.DiscardFinish) {
+                        parentLogic.changeToNextTurn()
+                        if (parentLogic.recievePlayer.id != ParentLogic.PARENT_ID) {
+                            sendPayload(this@MainActivity, parentLogic.recievePlayer.id, ConnectionMessage.createStrYourTurnMsg())
+                        } else {
+                            turnEndButton.isEnabled = true
                         }
+                        parentLogic.finishPlaying(endpointId)
+                    } else if (message.receiverAction == ReceiverAction.DrawFinish) {
+                        parentLogic.finishPlaying(endpointId)
                     }
                 }
             }
@@ -202,7 +214,7 @@ class MainActivity : AppCompatActivity() {
                 var playerCount = 1
                 logD("dealButton  start")
                 while (playerCount < parentLogic.playerInfoCount + 1) {
-                    parentLogic.getPlayerInitialHands(playerCount).let {pair ->
+                    parentLogic.getPlayerInitialHands(playerCount).let { pair ->
                         logD("dealButton  ${pair.second[0].suit}    ${pair.second[0].number}")
                         if (pair.first == ParentLogic.PARENT_ID) {
                             childLogic.createHands(pair.second)
@@ -226,13 +238,8 @@ class MainActivity : AppCompatActivity() {
 
         }
         turnEndButton.setOnClickListener {
-            isSender = false
+            isSender = true
             turnEndButton.isEnabled = false
-            if (isParent) {
-                parentLogic.changeToNextTurn()
-            } else {
-                sendPayload(this, childLogic.parentId, ConnectionMessage.createStrTurnChangeMsg())
-            }
         }
         gameStartButton.setOnClickListener {
             isSender = true
@@ -268,6 +275,10 @@ class MainActivity : AppCompatActivity() {
     private fun goHandViewByChild() {
         connectingView.visibility = View.GONE
         cardsView.visibility = View.VISIBLE
+    }
+
+    private fun goFinishView() {
+        cardsView.visibility = View.GONE
     }
 
 
@@ -352,13 +363,23 @@ class MainActivity : AppCompatActivity() {
         if (isSender) {
             isSender = false
             val card = childLogic.sendCard(event.position + 1)
-            setCardsList()
             val msg = ConnectionMessage.createStrMsg(ReceiverAction.GetCard, card)
             if (isParent) {
                 sendPayload(this, parentLogic.recievePlayer.id, msg)
                 parentLogic.changeToNextTurn()
             } else {
                 sendPayload(this, childLogic.parentId, msg)
+            }
+            if (childLogic.sortCardList.size != 0) {
+                val cardAdapter = CardAdapter(childLogic.sortCardList, this@MainActivity)
+                cardRecyclerView.adapter = cardAdapter
+            } else {
+                if (isParent) {
+                    parentLogic.finishPlaying(ParentLogic.PARENT_ID)
+                } else {
+                    sendPayload(this, childLogic.parentId, ConnectionMessage.createStrDrawFinishMsg())
+                }
+                goFinishView()
             }
             firstPosition = null
         } else {
@@ -377,8 +398,19 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setCardsList() {
-        val cardAdapter = CardAdapter(childLogic.sortCardList, this@MainActivity)
-        cardRecyclerView.adapter = cardAdapter
+        if (childLogic.sortCardList.size != 0) {
+            val cardAdapter = CardAdapter(childLogic.sortCardList, this@MainActivity)
+            cardRecyclerView.adapter = cardAdapter
+        } else {
+            if (isParent) {
+                parentLogic.changeToNextTurn()
+                parentLogic.finishPlaying(ParentLogic.PARENT_ID)
+                sendPayload(this@MainActivity, parentLogic.recievePlayer.id, ConnectionMessage.createStrYourTurnMsg())
+            } else {
+                sendPayload(this, childLogic.parentId, ConnectionMessage.createStrDiscardFinishMsg())
+            }
+            goFinishView()
+        }
     }
 
 }

@@ -43,8 +43,9 @@ public class ConnectionMessage {
     {
         GetCard,
         DealCard,
-        Finish,
-        TurnChange
+        DiscardFinish,
+        DrawFinish,
+        YourTurn
     }
 
     public static String createStrMsg(ReceiverAction receiverAction, List<Card> cardList) throws JsonProcessingException {
@@ -59,15 +60,21 @@ public class ConnectionMessage {
         return mapper.writeValueAsString(msg);
     }
 
-    public static String createStrFinishMsg() throws JsonProcessingException {
+    public static String createStrDiscardFinishMsg() throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
-        ConnectionMessage msg = new ConnectionMessage(ReceiverAction.Finish);
+        ConnectionMessage msg = new ConnectionMessage(ReceiverAction.DiscardFinish);
         return mapper.writeValueAsString(msg);
     }
 
-    public static String createStrTurnChangeMsg() throws JsonProcessingException {
+    public static String createStrDrawFinishMsg() throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
-        ConnectionMessage msg = new ConnectionMessage(ReceiverAction.TurnChange);
+        ConnectionMessage msg = new ConnectionMessage(ReceiverAction.DrawFinish);
+        return mapper.writeValueAsString(msg);
+    }
+
+    public static String createStrYourTurnMsg() throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        ConnectionMessage msg = new ConnectionMessage(ReceiverAction.YourTurn);
         return mapper.writeValueAsString(msg);
     }
     
