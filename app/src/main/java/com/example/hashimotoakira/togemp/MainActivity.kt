@@ -7,7 +7,6 @@ import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.hashimotoakira.togemp.logic.Card
 import com.example.hashimotoakira.togemp.logic.ChildLogic
 import com.example.hashimotoakira.togemp.logic.ConnectionMessage
 import com.example.hashimotoakira.togemp.logic.ConnectionMessage.*
@@ -20,7 +19,6 @@ import permissions.dispatcher.NeedsPermission
 import permissions.dispatcher.OnShowRationale
 import permissions.dispatcher.PermissionRequest
 import permissions.dispatcher.RuntimePermissions
-import java.lang.Exception
 
 @RuntimePermissions
 class MainActivity : AppCompatActivity() {
@@ -162,9 +160,11 @@ class MainActivity : AppCompatActivity() {
             goDealView()
         }
         dealButton.setOnClickListener {
-            var playerCount = 0
+            var playerCount = 1
+            logD("dealButton  start")
             while (playerCount < parentLogic.playerInfoCount) {
                 parentLogic.getPlayerInitialHands(playerCount).let {pair ->
+                    logD("dealButton  ${pair.second[0].suit}    ${pair.second[0].number}")
                     if (pair.first == ParentLogic.PARENT_ID) {
                         cardRecyclerView.let {
                             it.setHasFixedSize(true)
@@ -176,13 +176,15 @@ class MainActivity : AppCompatActivity() {
                                 }
                             })
                             it.adapter = cardAdapter
+                            goHandView()
                         }
                     } else {
-                        sendPayload(this@MainActivity,
-                                pair.first,
-                                createStrMsg(ReceiverAction.GetCard, pair.second))
+//                        sendPayload(this@MainActivity,
+//                                pair.first,
+//                                createStrMsg(ReceiverAction.GetCard, pair.second))
                     }
                 }
+                playerCount++
             }
         }
 //        cardRecyclerView.let {
@@ -215,6 +217,11 @@ class MainActivity : AppCompatActivity() {
     private fun goDealView() {
         shuffleView.visibility = View.GONE
         dealView.visibility = View.VISIBLE
+    }
+
+    private fun goHandView() {
+        dealView.visibility = View.GONE
+        cardsView.visibility = View.VISIBLE
     }
 
 

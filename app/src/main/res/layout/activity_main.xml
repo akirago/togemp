@@ -100,20 +100,6 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="182dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent">
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/cardRecyclerView"
-            android:layout_width="match_parent"
-            android:scrollbars="vertical"
-            android:layout_height="182dp" />
-
-    </FrameLayout>
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/dealView"
         android:layout_width="match_parent"
@@ -131,6 +117,20 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <FrameLayout
+        android:id="@+id/cardsView"
+        android:layout_width="match_parent"
+        android:layout_height="182dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:visibility="gone">
 
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/cardRecyclerView"
+            android:layout_width="match_parent"
+            android:scrollbars="vertical"
+            android:layout_height="182dp" />
+
+    </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

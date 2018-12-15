@@ -7,6 +7,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
+import static com.example.hashimotoakira.togemp.util.LOGKt.logD;
+
 
 // 親が呼ぶロジック
 public class ParentLogic {
@@ -61,6 +63,7 @@ public class ParentLogic {
                 playerInfo.draw(deck);
             }
         }
+        logD("dealButton  end");
     }
 
     // 各プレイヤーの順番を引数で受け取り、そのプレイヤーの初期手札を返す
