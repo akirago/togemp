@@ -11,6 +11,7 @@ public class PlayerInfo {
     public boolean isSendCardPlayer; // カードを送信するプレイヤーかどうか
     public int cardCount; // プレイヤーの手札枚数
     public List<Card> initialHands; // プレイヤーの初期手札
+    private int rank; // プレイヤーの順位
 
     public boolean isSendCardPlayer() {
         return isSendCardPlayer;
@@ -34,6 +35,14 @@ public class PlayerInfo {
 
     public void setPosition(int position) {
         this.position = position;
+    }
+
+    public int getRank() {
+        return rank;
+    }
+
+    public void setRank(int rank) {
+        this.rank = rank;
     }
 
     public int getCardCount() {
