@@ -19,6 +19,11 @@ import permissions.dispatcher.NeedsPermission
 import permissions.dispatcher.OnShowRationale
 import permissions.dispatcher.PermissionRequest
 import permissions.dispatcher.RuntimePermissions
+import org.greenrobot.eventbus.Subscribe
+import android.widget.Toast
+import com.example.hashimotoakira.togemp.util.MessageEvent
+import org.greenrobot.eventbus.EventBus
+
 
 @RuntimePermissions
 class MainActivity : AppCompatActivity() {
@@ -109,7 +114,6 @@ class MainActivity : AppCompatActivity() {
                     logD("onPayloadReceived $endpointId")
                     // getCard()
                 } else {
-                    showToast(this@MainActivity, it)
                     val message = ConnectionMessage.parseStrMsg(it)
 
                     childLogic.createHands(message.cardList)
@@ -117,14 +121,10 @@ class MainActivity : AppCompatActivity() {
                     cardRecyclerView.let {
                         it.setHasFixedSize(true)
                         it.layoutManager = LinearLayoutManager(this@MainActivity, LinearLayoutManager.HORIZONTAL, false)
-                        val cardAdapter = CardAdapter(message.cardList, this@MainActivity)
-                        cardAdapter.setClickListener(object : CardViewHolder.ItemClickListener {
-                            override fun onItemClick(view: View, position: Int) {
-
-                            }
-                        })
+                        val cardAdapter = CardAdapter(message.cardList, this@MainActivity, childLogic)
                         it.adapter = cardAdapter
                     }
+                    goHandViewByChild()
                 }
             }
         }
@@ -162,42 +162,27 @@ class MainActivity : AppCompatActivity() {
         dealButton.setOnClickListener {
             var playerCount = 1
             logD("dealButton  start")
-            while (playerCount < parentLogic.playerInfoCount) {
+            while (playerCount < parentLogic.playerInfoCount + 1) {
                 parentLogic.getPlayerInitialHands(playerCount).let {pair ->
                     logD("dealButton  ${pair.second[0].suit}    ${pair.second[0].number}")
                     if (pair.first == ParentLogic.PARENT_ID) {
+                        childLogic.createHands(pair.second)
                         cardRecyclerView.let {
                             it.setHasFixedSize(true)
                             it.layoutManager = LinearLayoutManager(this@MainActivity, LinearLayoutManager.HORIZONTAL, false)
-                            val cardAdapter = CardAdapter(pair.second, this@MainActivity)
-                            cardAdapter.setClickListener(object : CardViewHolder.ItemClickListener {
-                                override fun onItemClick(view: View, position: Int) {
-
-                                }
-                            })
+                            val cardAdapter = CardAdapter(pair.second, this@MainActivity, childLogic)
                             it.adapter = cardAdapter
                             goHandView()
                         }
                     } else {
-//                        sendPayload(this@MainActivity,
-//                                pair.first,
-//                                createStrMsg(ReceiverAction.GetCard, pair.second))
+                        sendPayload(this@MainActivity,
+                                pair.first,
+                                createStrMsg(ReceiverAction.GetCard, pair.second))
                     }
                 }
                 playerCount++
             }
         }
-//        cardRecyclerView.let {
-//            it.setHasFixedSize(true)
-//            it.layoutManager = LinearLayoutManager(this@MainActivity, LinearLayoutManager.HORIZONTAL, false)
-//            val cardAdapter = CardAdapter(cards, this@MainActivity)
-//            cardAdapter.setClickListener(object : CardViewHolder.ItemClickListener {
-//                override fun onItemClick(view: View, position: Int) {
-//
-//                }
-//            })
-//            it.adapter = cardAdapter
-//        }
     }
 
     private fun goConnectingView() {
@@ -221,6 +206,11 @@ class MainActivity : AppCompatActivity() {
 
     private fun goHandView() {
         dealView.visibility = View.GONE
+        cardsView.visibility = View.VISIBLE
+    }
+
+    private fun goHandViewByChild() {
+        connectingView.visibility = View.GONE
         cardsView.visibility = View.VISIBLE
     }
 
@@ -284,6 +274,25 @@ class MainActivity : AppCompatActivity() {
                 .addOnFailureListener {
                     logD("startDiscovery Failed")
                 }
+    }
+
+
+    override fun onStart() {
+        super.onStart()
+        EventBus.getDefault().register(this)
+    }
+
+    override fun onStop() {
+        EventBus.getDefault().unregister(this)
+        super.onStop()
+    }
+
+    // This method will be called when a MessageEvent is posted
+    @Subscribe
+    fun onMessageEvent(event: MessageEvent) {
+        val card = childLogic.sendCard(event.position)
+        ConnectionMessage.createStrMsg(ReceiverAction.GetCard, card)
+//        parentLogic.
     }
 
 }

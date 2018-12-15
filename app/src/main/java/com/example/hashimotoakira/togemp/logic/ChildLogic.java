@@ -79,7 +79,7 @@ public class ChildLogic {
 
     // 手札が引かれた際に呼ばれる
     // 手札を一枚捨てて、捨てたカード（渡したカード）を返す
-    public Card sendCard(int targetHandPosition){
+    public List<Card> sendCard(int targetHandPosition){
         int index = 0;
         Card card = null;
         for (Hand hand : hands) {
@@ -97,7 +97,8 @@ public class ChildLogic {
             hand.setHandPosition(newHandPosition);
             newHandPosition++;
         }
-
-        return card;
+        List<Card> cards = new ArrayList<>();
+        cards.add(card);
+        return cards;
     }
 }
