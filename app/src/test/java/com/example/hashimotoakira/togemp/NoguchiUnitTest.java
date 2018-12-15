@@ -108,10 +108,8 @@ public class NoguchiUnitTest {
         System.out.println("\n--------順位をつけていく--------");
         for (int i = 0; i < parentLogic.getPlayerInfoList().size(); i++) {
             PlayerInfo playerInfo = parentLogic.getPlayerInfoList().get(i);
-            parentLogic.setPlayerRank(playerInfo.getId());
+            int rank = parentLogic.finishPlaying(playerInfo.getId());
+            System.out.println("プレイヤーID: " + playerInfo.getId() + " 順位: " + rank);
         }
-        parentLogic.getPlayerInfoList().forEach(playerInfo -> {
-            System.out.println("プレイヤーID: " + playerInfo.getId() + " 順位: " + playerInfo.getRank());
-        });
     }
 }

@@ -154,12 +154,26 @@ public class ParentLogic {
     }
 
     /**
-     * プレイヤーの順位をつける
+     * プレイヤーをあがったことにする
+     * 返り値でそのプレイヤーの順位を返す
      * @param id プレイヤーのID
+     * @return プレイヤーの順位
      */
-    public void setPlayerRank(String id){
+    public int finishPlaying(String id){
         Integer maxRank = playerInfoList.stream().map(playerInfo -> playerInfo.getRank()).max(Comparator.naturalOrder()).orElse(0);
         PlayerInfo playerInfo = playerInfoList.stream().filter(info -> id.equals(info.getId())).findFirst().get();
         playerInfo.setRank(maxRank + 1);
+        playerInfo.setCardCount(0);
+        return playerInfo.getRank();
+    }
+
+    /**
+     * プレイヤーの順位を取得する
+     * @param id プレイヤーのID
+     * @return プレイヤーの順位
+     */
+    public int getPlayerRank(String id) {
+        PlayerInfo playerInfo = playerInfoList.stream().filter(info -> id.equals(info.getId())).findFirst().get();
+        return playerInfo.getRank();
     }
 }
