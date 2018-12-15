@@ -24,6 +24,10 @@ public class ExampleUnitTest {
         System.out.print(fuga);
         ConnectionMessage after = ConnectionMessage.parseStrMsg(fuga);
         System.out.print(after.getReceiverAction());
+
+        String finishMsg = ConnectionMessage.createStrFinishMsg();
+        ConnectionMessage finishObj = ConnectionMessage.parseStrMsg(finishMsg);
+        System.out.print(finishObj.getReceiverAction());
     }
 
 

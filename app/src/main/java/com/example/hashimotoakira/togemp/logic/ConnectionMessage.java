@@ -14,6 +14,10 @@ public class ConnectionMessage {
     public ConnectionMessage() {
     }
 
+    public ConnectionMessage(ReceiverAction receiverAction) {
+        this.receiverAction = receiverAction;
+    }
+
     public ConnectionMessage(ReceiverAction receiverAction, List<Card> cardList) {
         this.receiverAction = receiverAction;
         this.cardList = cardList;
@@ -39,6 +43,7 @@ public class ConnectionMessage {
     {
         GetCard,
         DealCard,
+        Finish,
     }
 
     public static String createStrMsg(ReceiverAction receiverAction, List<Card> cardList) throws JsonProcessingException {
@@ -47,6 +52,18 @@ public class ConnectionMessage {
         return mapper.writeValueAsString(msg);
     }
 
+    public static String createStrCardMsg(ReceiverAction receiverAction, List<Card> cardList) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        ConnectionMessage msg = new ConnectionMessage(receiverAction, cardList);
+        return mapper.writeValueAsString(msg);
+    }
+
+    public static String createStrFinishMsg() throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        ConnectionMessage msg = new ConnectionMessage(ReceiverAction.Finish);
+        return mapper.writeValueAsString(msg);
+    }
+    
     public static ConnectionMessage parseStrMsg(String jsonStr) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         return mapper.readValue(jsonStr, ConnectionMessage.class);
