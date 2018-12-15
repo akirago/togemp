@@ -8,8 +8,17 @@ public class PlayerInfo {
 
     public String id; // プレイヤーのID、親ならparent
     public int position; // プレイヤーの位置（＝順番）、1始まり
+    public boolean isSendCardPlayer; // カードを送信するプレイヤーかどうか
     public int cardCount; // プレイヤーの手札枚数
     public List<Card> initialHands; // プレイヤーの初期手札
+
+    public boolean isSendCardPlayer() {
+        return isSendCardPlayer;
+    }
+
+    public void setSendCardPlayer(boolean sendCardPlayer) {
+        isSendCardPlayer = sendCardPlayer;
+    }
 
     public String getId() {
         return id;
