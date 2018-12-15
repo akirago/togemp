@@ -153,9 +153,9 @@ public class ChildLogic {
     }
 
     /**
-     * 手札の位置を入れ替える
+     * 手札の位置をシャッフルする
      */
-    public void changeHandsPosition(){
+    public void shuffleCards(){
         int handsSize = hands.size();
         List<Integer> positionList = new ArrayList<>();
         for (int i = 1; i <= handsSize; i++) {

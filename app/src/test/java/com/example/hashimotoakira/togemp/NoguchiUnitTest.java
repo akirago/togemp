@@ -97,7 +97,7 @@ public class NoguchiUnitTest {
         });
 
         System.out.println("\n--------カードの順番を入れ替える--------");
-        childLogic.changeHandsPosition();
+        childLogic.shuffleCards();
 //        childLogic.getHands().forEach(myHand -> {
 //            System.out.println( "カード マーク: " + myHand.getCard().suit + " 数字: " + myHand.getCard().number + " 順番: " + myHand.getHandPosition());
 //        });
