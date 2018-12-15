@@ -26,7 +26,7 @@ class CardAdapter(val cardList: List<Card>, val context: Context) : RecyclerView
         val suit = cardList[position].suit
         val imageId = context.resources.getIdentifier(suit + number, "drawable", context.packageName)
         val bitmap = BitmapFactory.decodeResource(context.resources, imageId)
-        val resizedBitmap = Bitmap.createScaledBitmap(bitmap, 50, 100, false)
+        val resizedBitmap = Bitmap.createScaledBitmap(bitmap, 60, 91, false)
         //100x100の大きさにリサイズ
         val drawable = BitmapDrawable(context.resources, resizedBitmap)
         (holder.itemView as ImageView).setImageDrawable(drawable)
