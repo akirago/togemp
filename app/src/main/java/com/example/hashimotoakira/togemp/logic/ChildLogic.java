@@ -104,7 +104,7 @@ public class ChildLogic {
      * 現在の手札枚数を取得する
      * @return 現在の手札枚数
      */
-    public int getHandsCount(){
+    public int getCardsCount(){
         return hands.size();
     }
 
