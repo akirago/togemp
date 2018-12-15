@@ -2,10 +2,12 @@ package com.example.hashimotoakira.togemp
 
 import android.Manifest
 import android.content.DialogInterface
-import android.os.Build
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import com.example.hashimotoakira.togemp.logic.ChildLogic
+import com.example.hashimotoakira.togemp.logic.ParentLogic
 import com.example.hashimotoakira.togemp.util.*
 import com.google.android.gms.nearby.Nearby
 import com.google.android.gms.nearby.connection.*
@@ -14,11 +16,11 @@ import permissions.dispatcher.NeedsPermission
 import permissions.dispatcher.OnShowRationale
 import permissions.dispatcher.PermissionRequest
 import permissions.dispatcher.RuntimePermissions
+import java.lang.Exception
 
 @RuntimePermissions
 class MainActivity : AppCompatActivity() {
 
-    // 親と子の判定が必要なので追加
     private var isParent = false
 
     private var parentId = ""
@@ -26,6 +28,10 @@ class MainActivity : AppCompatActivity() {
     private var participantNumber = 0
 
     private var connectedDeviceCount = 1
+
+    private val parentLogic = ParentLogic()
+
+    private val childLogic = ChildLogic()
 
     /**
      * String: endpointId
@@ -39,6 +45,10 @@ class MainActivity : AppCompatActivity() {
                                      discoveredEndpointInfo: DiscoveredEndpointInfo) {
             // 端末を検出した
             endpointIds.add(endpointId)
+            if (isParent) {
+                parentLogic.addPlayer(endpointId)
+                parentLogic.setPlayerPositionById(endpointId)
+            }
             logD("onEndpointFound  endpointID = $endpointId")
             requestConnection(
                     this@MainActivity,
@@ -59,8 +69,9 @@ class MainActivity : AppCompatActivity() {
         // requestConnectionの後に呼ばれる
         override fun onConnectionInitiated(endpointId: String, connectionInfo: ConnectionInfo) {
             logD("connectionLifecycleCallback onConnectionInitiated endpointId = $endpointId ")
-            if (!isParent) {
+            if (!isParent && parentId.isEmpty()) {
                 parentId = endpointId
+                childLogic.setParentId(endpointId)
             }
             acceptConnections(this@MainActivity, endpointId, payloadCallback)
         }
@@ -69,6 +80,7 @@ class MainActivity : AppCompatActivity() {
             logD("connectionLifecycleCallback onConnectionResult: $connectedDeviceCount ${result.status.statusCode}")
             if (isParent) {
                 connectedDeviceCount++
+                playerCount.text = connectedDeviceCount.toString()
                 if (connectedDeviceCount == participantNumber) {
                     logD("connectionLifecycleCallback onConnectionResult sendPayload")
                     endpointIds.forEach { toEndpointId ->
@@ -76,6 +88,7 @@ class MainActivity : AppCompatActivity() {
                                 toEndpointId,
                                 "start")
                     }
+                    nextButton.isEnabled = true
                 }
 
             }
@@ -104,11 +117,15 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+
+    //ここからスタート
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         makeRoom.setOnClickListener {
             isParent = true
+            parentLogic.addPlayer(ParentLogic.PARENT_ID)
+            parentLogic.setPlayerPositionById(ParentLogic.PARENT_ID)
             AlertDialog.Builder(this)
                     .setTitle("何人参加しますか")
                     .setItems(arrayOf("2", "3", "4", "5")) { _: DialogInterface, i: Int ->
@@ -116,27 +133,36 @@ class MainActivity : AppCompatActivity() {
                         startDiscoveryWithPermissionCheck(endpointDiscoveryCallback)
                     }
                     .create().show()
+            goConnectingView()
         }
         enterRoom.setOnClickListener {
             startAdvertisingWithPermissionCheck(connectionLifecycleCallback)
+            goConnectingView()
         }
-        sendMessage.setOnClickListener {
-            if (isParent) {
-                AlertDialog.Builder(this)
-                        .setTitle("誰にメッセージを送信しますか")
-                        .setItems(endpointIds.toTypedArray()) { dialogInterface: DialogInterface, i: Int ->
-                            sendPayload(this,
-                                    endpointIds[i],
-                                    Build.HARDWARE)
-                        }
-                        .create().show()
-            } else {
-                sendPayload(this,
-                        parentId,
-                        Build.HARDWARE)
-            }
+        nextButton.setOnClickListener {
+            goShufflingView()
+        }
+        shuffleButton.setOnClickListener {
+            throw Exception()
         }
     }
+
+    private fun goConnectingView() {
+        settingView.visibility = View.GONE
+        connectingView.visibility = View.VISIBLE
+        if (isParent) {
+            nextButton.visibility = View.VISIBLE
+            playerCount.visibility = View.VISIBLE
+        }
+    }
+
+    private fun goShufflingView() {
+        connectingView.visibility = View.GONE
+        shuffleView.visibility = View.VISIBLE
+    }
+
+
+    // ここから下は基本触らない
 
     // RuntimePermission用
     // PermissionDispatcherの関係でActivityに入れてある
