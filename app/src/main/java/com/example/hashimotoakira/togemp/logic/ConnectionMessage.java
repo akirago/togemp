@@ -10,6 +10,10 @@ public class ConnectionMessage {
     public ReceiverAction receiverAction;
     public List<Card> cardList;
 
+    //  jacksonのライブラリーを使うため空のコンストラクタが必須
+    public ConnectionMessage() {
+    }
+
     public ConnectionMessage(ReceiverAction receiverAction, List<Card> cardList) {
         this.receiverAction = receiverAction;
         this.cardList = cardList;
@@ -39,10 +43,11 @@ public class ConnectionMessage {
 
     public static String createStrMsg(ReceiverAction receiverAction, List<Card> cardList) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
-        return mapper.writeValueAsString(new ConnectionMessage(receiverAction,cardList));
+        ConnectionMessage msg = new ConnectionMessage(receiverAction, cardList);
+        return mapper.writeValueAsString(msg);
     }
 
-    public static ConnectionMessage parse(String jsonStr) throws IOException {
+    public static ConnectionMessage parseStrMsg(String jsonStr) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         return mapper.readValue(jsonStr, ConnectionMessage.class);
     }

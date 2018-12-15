@@ -4,8 +4,6 @@ import android.util.Log;
 
 import com.example.hashimotoakira.togemp.logic.Card;
 import com.example.hashimotoakira.togemp.logic.ConnectionMessage;
-import com.example.hashimotoakira.togemp.logic.Player;
-
 import org.junit.Test;
 
 import java.lang.reflect.Array;
@@ -22,13 +20,11 @@ public class ExampleUnitTest {
 
     @Test
     public void addition_isCorrect() throws Exception {
-        ConnectionMessage hoge = new ConnectionMessage(ConnectionMessage.ReceiverAction.GetCard, Arrays.asList(new Card("sute", 2)));
-        String fuga = ConnectionMessage.createStrMsg(ConnectionMessage.ReceiverAction.GetCard,  Arrays.asList(new Card("sute", 2)));
+        ConnectionMessage hoge = new ConnectionMessage(ConnectionMessage.ReceiverAction.TransferCard, Arrays.asList(new Card("sute", 2)));
         System.out.print(hoge.getReceiverAction());
+        String fuga = ConnectionMessage.createStrMsg(ConnectionMessage.ReceiverAction.GetCard,  Arrays.asList(new Card("sute", 2)));
         System.out.print(fuga);
-        ConnectionMessage after = ConnectionMessage.parse(fuga);
+        ConnectionMessage after = ConnectionMessage.parseStrMsg(fuga);
         System.out.print(after.getReceiverAction());
-
-        assertEquals(4, 2 + 2);
     }
 }
