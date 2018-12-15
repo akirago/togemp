@@ -38,8 +38,8 @@
             android:id="@+id/enterRoom"
             android:layout_width="160dp"
             android:layout_height="56dp"
-            android:text="部屋に入る"
             android:background="@drawable/button_style"
+            android:text="部屋に入る"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
@@ -152,7 +152,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleType="centerCrop"
-            android:visibility="gone"/>
+            android:visibility="gone" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -192,10 +192,19 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <Button
-            android:id="@+id/turnEndButton"
-            android:text="TurnEnd"
+            android:id="@+id/gameStartButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:text="GameStart"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <Button
+            android:id="@+id/turnEndButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="TurnEnd"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 

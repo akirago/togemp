@@ -1,34 +1,28 @@
 package com.example.hashimotoakira.togemp
 
 import android.Manifest
-import android.content.DialogInterface
-import android.media.Image
 import android.os.Bundle
 import android.os.Handler
 import android.view.View
-import android.widget.ImageView
-import android.widget.TextView
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.GlideDrawableImageViewTarget
 import com.example.hashimotoakira.togemp.logic.ChildLogic
 import com.example.hashimotoakira.togemp.logic.ConnectionMessage
-import com.example.hashimotoakira.togemp.logic.ConnectionMessage.*
+import com.example.hashimotoakira.togemp.logic.ConnectionMessage.ReceiverAction
+import com.example.hashimotoakira.togemp.logic.ConnectionMessage.createStrMsg
 import com.example.hashimotoakira.togemp.logic.ParentLogic
 import com.example.hashimotoakira.togemp.util.*
 import com.google.android.gms.nearby.Nearby
 import com.google.android.gms.nearby.connection.*
 import kotlinx.android.synthetic.main.activity_main.*
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
 import permissions.dispatcher.NeedsPermission
 import permissions.dispatcher.OnShowRationale
 import permissions.dispatcher.PermissionRequest
 import permissions.dispatcher.RuntimePermissions
-import org.greenrobot.eventbus.Subscribe
-import android.widget.Toast
-import com.bumptech.glide.Glide
-import com.bumptech.glide.request.target.GlideDrawableImageViewTarget
-import com.example.hashimotoakira.togemp.util.MessageEvent
-import org.greenrobot.eventbus.EventBus
 
 
 @RuntimePermissions
@@ -162,7 +156,6 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         makeRoom.setOnClickListener {
             isParent = true
-            isSender = true
             parentLogic.addPlayer(ParentLogic.PARENT_ID)
             parentLogic.setPlayerPositionById(ParentLogic.PARENT_ID)
             startDiscoveryWithPermissionCheck(endpointDiscoveryCallback)
@@ -174,21 +167,18 @@ class MainActivity : AppCompatActivity() {
         }
         nextButton.setOnClickListener {
             goShufflingView()
-//            val target = GlideDrawableImageViewTarget(shuffleButton)
-//            Glide.with(this).load(R.raw.anim01_prompt_shuffle).into(target)
+            val target = GlideDrawableImageViewTarget(shuffleButton)
+            Glide.with(this).load(R.raw.anim01_prompt_shuffle).into(target)
         }
         shuffleButton.setOnClickListener {
             parentLogic.createHands()
 
-            val shuffleButton = findViewById<View>(R.id.shuffleButton) as ImageView
-//            val shuffilingText = findViewById<View>(R.id.shuffilingText) as TextView
-            val shufflingView = findViewById<View>(R.id.shufflingView) as ImageView
             shuffleButton.visibility = View.GONE
-//            shuffilingText.visibility = View.GONE
+            shufflingText.visibility = View.GONE
             shufflingView.visibility = View.VISIBLE
 
-//            val target = GlideDrawableImageViewTarget(shufflingView)
-//            Glide.with(this).load(R.raw.anim02_shuffle).into(target)
+            val target = GlideDrawableImageViewTarget(shufflingView)
+            Glide.with(this).load(R.raw.anim02_shuffle).into(target)
             // 4.333秒たったら元のViewに戻す
             val runnable = Runnable {
                 goDealView()
@@ -225,6 +215,9 @@ class MainActivity : AppCompatActivity() {
             } else {
 //                sendPayload(this, childLogic.parentId, ConnectionMessage)
             }
+        }
+        gameStartButton.setOnClickListener {
+            isSender = true
         }
     }
 
@@ -330,6 +323,8 @@ class MainActivity : AppCompatActivity() {
         super.onStop()
     }
 
+    var firstPosition: Int? = null
+
     // This method will be called when a MessageEvent is posted
     @Subscribe
     fun onMessageEvent(event: MessageEvent) {
@@ -344,6 +339,16 @@ class MainActivity : AppCompatActivity() {
                 parentLogic.changeToNextTurn()
             } else {
                 sendPayload(this, childLogic.parentId, msg)
+            }
+        } else {
+            if (firstPosition == null) {
+                firstPosition = event.position
+            } else {
+                if (childLogic.discard(firstPosition!!, event.position)) {
+                    setCardsList()
+                } else {
+                    showToast(this, "そのカードはそろってないですねー")
+                }
             }
         }
     }
