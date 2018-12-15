@@ -10,34 +10,46 @@ import java.util.stream.Collectors;
 
 import static com.example.hashimotoakira.togemp.util.LOGKt.logD;
 
-
-// 親が呼ぶロジック
+/**
+ * 親が呼ぶロジック
+ */
 public class ParentLogic {
 
-    public static final String PARENT_ID = "parent";
-
-    private List<PlayerInfo> playerInfoList;
-
-    public List<PlayerInfo> getPlayerInfoList() {
-        return playerInfoList;
-    }
-
-
-    // プレイヤーの参加人数を返す
-    public int getPlayerInfoCount() {
-        return playerInfoList.size();
-    }
+    public static final String PARENT_ID = "parent"; // 親のIDは固定で持っておく
+    private List<PlayerInfo> playerInfoList; // 全プレイヤーの情報リスト
 
     public ParentLogic() {
         this.playerInfoList = new ArrayList<>();
     }
 
-    // プレイヤー情報を追加する
+    /**
+     * 全プレイヤーの情報リストを取得する
+     * @return 全プレイヤーの情報リスト
+     */
+    public List<PlayerInfo> getPlayerInfoList() {
+        return playerInfoList;
+    }
+
+    /**
+     * プレイヤーの人数を取得する
+     * @return プレイヤーの人数
+     */
+    public int getPlayerInfoCount() {
+        return playerInfoList.size();
+    }
+
+    /**
+     * idからプレイヤー情報作成し、リストに追加する
+     * @param id プレイヤーのID
+     */
     public void addPlayer(String id) {
         playerInfoList.add(new PlayerInfo(id));
     }
 
-    // プレイヤーの順番を設定する
+    /**
+     * プレイヤーのIDを受け取り、順番を設定する
+     * @param id プレイヤーのID
+     */
     public void setPlayerPositionById(String id) {
         Optional<Integer> optMaxPosition = playerInfoList.stream().map(playerInfo -> playerInfo.getPosition()).max(Comparator.naturalOrder());
         Integer maxPosition = optMaxPosition.orElse(0);
@@ -50,14 +62,11 @@ public class ParentLogic {
         });
     }
 
-    // 新しくデッキを作成する
-    public Deck createDeck() {
-        return new Deck();
-    }
-
-    // 新しく各プレイヤーに対し手札を作成する
+    /**
+     * デッキを作成し、それを元に各プレイヤーの手札を作成する
+     */
     public void createHands() {
-        Deck deck = createDeck();
+        Deck deck = new Deck();
         for (PlayerInfo playerInfo : playerInfoList) {
             playerInfo.createEmptyHands();
         }
@@ -74,7 +83,11 @@ public class ParentLogic {
         }
     }
 
-    // 各プレイヤーの順番を引数で受け取り、そのプレイヤーの初期手札を返す
+    /**
+     * 各プレイヤーの順番を引数で受け取り、そのプレイヤーの初期手札を返す
+     * @param position プレイヤーの順番
+     * @return プレイヤーのIDと初期手札のペア
+     */
     public Pair<String, List<Card>> getPlayerInitialHands(int position) {
         String id = null;
         List<Card> initialHands = new ArrayList<>();
@@ -88,13 +101,19 @@ public class ParentLogic {
         return new Pair<>(id, initialHands);
     }
 
-    // プレイヤーの手札枚数を更新する
+    /**
+     * プレイヤーの手札枚数を指定の通りに更新する
+     * @param id プレイヤーの人数
+     * @param cardCount 更新したい手札枚数
+     */
     public void updatePlayerHandsCount(String id, int cardCount) {
         PlayerInfo playerInfo = playerInfoList.stream().filter(info -> id.equals(info.getId())).findFirst().get();
         playerInfo.setCardCount(cardCount);
     }
 
-    // 次のターンに切り替える
+    /**
+     * 次のターンに切り替える
+     */
     public void changeToNextTurn() {
         PlayerInfo currentPlayer = getSendPlayer();
         PlayerInfo nextPlayer = getRecievePlayer();
@@ -102,12 +121,18 @@ public class ParentLogic {
         nextPlayer.setSendCardPlayer(true);
     }
 
-    // カードを送信するプレイヤーを取得する
+    /**
+     * カードを送信するプレイヤーを取得する
+     * @return カードを送信するプレイヤー
+     */
     public PlayerInfo getSendPlayer() {
         return playerInfoList.stream().filter(playerInfo -> playerInfo.isSendCardPlayer()).findFirst().get();
     }
 
-    // カードを受け取りプレイヤーを取得する.存在しない場合はnullが返る
+    /**
+     * カードを受け取るプレイヤーを取得する.存在しない場合はnullが返る
+     * @return カードを受け取るプレイヤー
+     */
     public PlayerInfo getRecievePlayer() {
         // ポジションごとに並び替え
         List<PlayerInfo> restPlayerList = playerInfoList.stream().filter(playerInfo -> playerInfo.getCardCount() != 0).sorted(Comparator.comparing(PlayerInfo::getPosition)).collect(Collectors.toList());
@@ -128,6 +153,10 @@ public class ParentLogic {
         return null;
     }
 
+    /**
+     * プレイヤーの順位をつける
+     * @param id プレイヤーのID
+     */
     public void setPlayerRank(String id){
         Integer maxRank = playerInfoList.stream().map(playerInfo -> playerInfo.getRank()).max(Comparator.naturalOrder()).orElse(0);
         PlayerInfo playerInfo = playerInfoList.stream().filter(info -> id.equals(info.getId())).findFirst().get();
