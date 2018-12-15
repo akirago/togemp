@@ -1,6 +1,7 @@
 package com.example.hashimotoakira.togemp.logic;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -116,5 +117,21 @@ public class ChildLogic {
         List<Card> cards = new ArrayList<>();
         cards.add(card);
         return cards;
+    }
+
+    // 手札の位置を入れ替える
+    public void changeHandsPosition(){
+        int handsSize = hands.size();
+        List<Integer> positionList = new ArrayList<>();
+        for (int i = 1; i <= handsSize; i++) {
+            positionList.add(i);
+        }
+
+        Collections.shuffle(positionList);
+
+        for (int i = 0; i < handsSize; i++) {
+            Hand hand = hands.get(i);
+            hand.setHandPosition(positionList.get(i));
+        }
     }
 }
