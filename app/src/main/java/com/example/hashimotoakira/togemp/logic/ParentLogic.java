@@ -47,6 +47,9 @@ public class ParentLogic {
     // 新しく各プレイヤーに対し手札を作成する
     public void createHands(){
         Deck deck = createDeck();
+        for (PlayerInfo playerInfo : playerInfoList) {
+            playerInfo.createEmptyHands();
+        }
 
         // デッキがなくなるまで配り続ける
         while (!deck.isEmpty()) {
@@ -72,5 +75,11 @@ public class ParentLogic {
             }
         }
         return new Pair<>(id, initialHands);
+    }
+
+    // プレイヤーの手札枚数を更新する
+    public void updatePlayerHandsCount(String id, int cardCount){
+        PlayerInfo playerInfo = playerInfoList.stream().filter(info -> id.equals(info.getId())).findFirst().get();
+        playerInfo.setCardCount(cardCount);
     }
 }
