@@ -16,11 +16,12 @@ public class ParentLogic {
 
     public static final String PARENT_ID = "parent";
 
+    private List<PlayerInfo> playerInfoList;
+
     public List<PlayerInfo> getPlayerInfoList() {
         return playerInfoList;
     }
 
-    public List<PlayerInfo> playerInfoList;
 
     // プレイヤーの参加人数を返す
     public int getPlayerInfoCount() {
@@ -125,5 +126,11 @@ public class ParentLogic {
         }
         // ここまで来るロジックはないけど、エディタで警告が出るのでnullを返す
         return null;
+    }
+
+    public void setPlayerRank(String id){
+        Integer maxRank = playerInfoList.stream().map(playerInfo -> playerInfo.getRank()).max(Comparator.naturalOrder()).orElse(0);
+        PlayerInfo playerInfo = playerInfoList.stream().filter(info -> id.equals(info.getId())).findFirst().get();
+        playerInfo.setRank(maxRank + 1);
     }
 }

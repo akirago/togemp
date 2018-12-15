@@ -40,10 +40,10 @@ public class NoguchiUnitTest {
         parentLogic.createHands();
 
         System.out.println("\n--------各プレイヤーの手札作成--------");
-        for (PlayerInfo info : parentLogic.playerInfoList) {
+        for (PlayerInfo info : parentLogic.getPlayerInfoList()) {
             String id = null;
             List<Card> initialHands = new ArrayList<>();
-            for (PlayerInfo playerInfo : parentLogic.playerInfoList) {
+            for (PlayerInfo playerInfo : parentLogic.getPlayerInfoList()) {
                 int position = info.getPosition();
                 if (position == playerInfo.getPosition()) {
                     id = playerInfo.getId();
@@ -57,7 +57,7 @@ public class NoguchiUnitTest {
         }
 
         System.out.println("\n--------自分がparentだとしてプレイ開始--------");
-        PlayerInfo playerMyself = parentLogic.playerInfoList.stream().filter(playerInfo -> playerInfo.getId().equals(parentId)).findFirst().get();
+        PlayerInfo playerMyself = parentLogic.getPlayerInfoList().stream().filter(playerInfo -> playerInfo.getId().equals(parentId)).findFirst().get();
         List<Card> myInitialHands = playerMyself.getInitialHands();
         ChildLogic childLogic = new ChildLogic();
         childLogic.createHands(myInitialHands);
@@ -103,6 +103,15 @@ public class NoguchiUnitTest {
 //        });
         childLogic.getSortCardList().forEach(card -> {
             System.out.println( "カード マーク: " + card.suit + " 数字: " + card.number);
+        });
+
+        System.out.println("\n--------順位をつけていく--------");
+        for (int i = 0; i < parentLogic.getPlayerInfoList().size(); i++) {
+            PlayerInfo playerInfo = parentLogic.getPlayerInfoList().get(i);
+            parentLogic.setPlayerRank(playerInfo.getId());
+        }
+        parentLogic.getPlayerInfoList().forEach(playerInfo -> {
+            System.out.println("プレイヤーID: " + playerInfo.getId() + " 順位: " + playerInfo.getRank());
         });
     }
 }

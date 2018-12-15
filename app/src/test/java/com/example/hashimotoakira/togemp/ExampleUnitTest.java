@@ -50,7 +50,7 @@ public class ExampleUnitTest {
             parentLogic.updatePlayerHandsCount(playerId, 3);
         }
         // 残り枚数を確認
-        parentLogic.playerInfoList.forEach(player -> {
+        parentLogic.getPlayerInfoList().forEach(player -> {
                     System.out.print(player.getCardCount());
                 }
         );
