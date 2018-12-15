@@ -21,11 +21,13 @@ import static org.junit.Assert.*;
 public class ExampleUnitTest {
 
     @Test
-    public void addition_isCorrect() {
-
-       ConnectionMessage hoge = new ConnectionMessage(JsonMessage.ReceiverAction.GetCard, Arrays.asList(new Card("sute", 2)));
-
+    public void addition_isCorrect() throws Exception {
+        ConnectionMessage hoge = new ConnectionMessage(ConnectionMessage.ReceiverAction.GetCard, Arrays.asList(new Card("sute", 2)));
+        String fuga = ConnectionMessage.createStrMsg(ConnectionMessage.ReceiverAction.GetCard,  Arrays.asList(new Card("sute", 2)));
         System.out.print(hoge.getReceiverAction());
+        System.out.print(fuga);
+        ConnectionMessage after = ConnectionMessage.parse(fuga);
+        System.out.print(after.getReceiverAction());
 
         assertEquals(4, 2 + 2);
     }
