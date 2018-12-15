@@ -11,9 +11,12 @@ public class ChildLogic {
     public String parentId; // 親のID
     public List<Hand> hands; // 手札
 
-    public ChildLogic(String parentId) {
-        this.parentId = parentId;
+    public ChildLogic() {
         this.hands = new ArrayList<>();
+    }
+
+    public void setParentId(String parentId) {
+        this.parentId = parentId;
     }
 
     public String getParentId() {
