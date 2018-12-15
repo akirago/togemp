@@ -94,7 +94,6 @@ class MainActivity : AppCompatActivity() {
                     }
                     nextButton.isEnabled = true
                 }
-
             }
         }
 
@@ -116,21 +115,27 @@ class MainActivity : AppCompatActivity() {
                     logD("onPayloadReceived $endpointId")
                     // getCard()
                 } else {
+                    if (isParent && endpointId == ParentLogic.PARENT_ID) {
+                        sendPayload(this@MainActivity, parentLogic.recievePlayer.id, it)
+                        return@also
+                    }
+
                     val message = ConnectionMessage.parseStrMsg(it)
+
                     if (message.receiverAction == ReceiverAction.DealCard) {
                         childLogic.createHands(message.cardList)
+                        goHandViewByChild()
                     } else if (message.receiverAction == ReceiverAction.GetCard) {
                         childLogic.receiveCard(message.cardList)
-
+                        parentLogic.changeToNextTurn()
                     }
 
                     cardRecyclerView.let {
                         it.setHasFixedSize(true)
                         it.layoutManager = LinearLayoutManager(this@MainActivity, LinearLayoutManager.HORIZONTAL, false)
-//                        val cardAdapter = CardAdapter(childLogic.getHands(), this@MainActivity)
-//                        it.adapter = cardAdapter
+                        val cardAdapter = CardAdapter(childLogic.sortCardList, this@MainActivity)
+                        it.adapter = cardAdapter
                     }
-                    goHandViewByChild()
                 }
             }
         }
@@ -183,7 +188,7 @@ class MainActivity : AppCompatActivity() {
                     } else {
                         sendPayload(this@MainActivity,
                                 pair.first,
-                                createStrMsg(ReceiverAction.GetCard, pair.second))
+                                createStrMsg(ReceiverAction.DealCard, pair.second))
                     }
                 }
                 playerCount++
@@ -296,7 +301,10 @@ class MainActivity : AppCompatActivity() {
     // This method will be called when a MessageEvent is posted
     @Subscribe
     fun onMessageEvent(event: MessageEvent) {
+        logD("onMessageEvent  ${event.position}")
         val card = childLogic.sendCard(event.position + 1)
+        val cardAdapter = CardAdapter(childLogic.sortCardList, this@MainActivity)
+        cardRecyclerView.adapter = cardAdapter
         val msg = ConnectionMessage.createStrMsg(ReceiverAction.GetCard, card)
         if (isParent) {
             sendPayload(this, parentLogic.recievePlayer.id, msg)
