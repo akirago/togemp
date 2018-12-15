@@ -11,7 +11,7 @@ public class Deck {
     // 初期化で52枚カードとジョーカを生成してシャッフル
     public Deck() {
         this.cardList = new LinkedList<>();
-        List<String> suitList = Arrays.asList("spade", "hart", "dia", "clover");
+        List<String> suitList = Arrays.asList("s", "h", "d", "c");
         for (String suit : suitList) {
             for (int i = 1; i <= 13; i++) {
                 cardList.add(new Card(suit, i));

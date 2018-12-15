@@ -7,7 +7,7 @@ import java.util.List;
 public class PlayerInfo {
 
     public String id; // プレイヤーのID、親ならparent
-    public int position; // プレイヤーの位置（＝順番）
+    public int position; // プレイヤーの位置（＝順番）、1始まり
     public int cardCount; // プレイヤーの手札枚数
     public List<Card> initialHands; // プレイヤーの初期手札
 
