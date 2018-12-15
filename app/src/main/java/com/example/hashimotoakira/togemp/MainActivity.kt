@@ -30,7 +30,7 @@ class MainActivity : AppCompatActivity() {
 
     private var isParent = false
 
-    private var participantNumber = 0
+//    private var participantNumber = 0
 
     private var connectedDeviceCount = 1
 
@@ -85,7 +85,7 @@ class MainActivity : AppCompatActivity() {
             if (isParent) {
                 connectedDeviceCount++
                 playerCount.text = connectedDeviceCount.toString()
-                if (connectedDeviceCount == participantNumber) {
+                if (connectedDeviceCount > 1) {
                     logD("connectionLifecycleCallback onConnectionResult sendPayload")
                     endpointIds.forEach { toEndpointId ->
                         sendPayload(this@MainActivity,
@@ -115,8 +115,9 @@ class MainActivity : AppCompatActivity() {
                     logD("onPayloadReceived $endpointId")
                     // getCard()
                 } else {
-                    if (isParent && endpointId == ParentLogic.PARENT_ID) {
+                    if (isParent && endpointId != ParentLogic.PARENT_ID) {
                         sendPayload(this@MainActivity, parentLogic.recievePlayer.id, it)
+                        parentLogic.changeToNextTurn()
                         return@also
                     }
 
@@ -125,16 +126,18 @@ class MainActivity : AppCompatActivity() {
                     if (message.receiverAction == ReceiverAction.DealCard) {
                         childLogic.createHands(message.cardList)
                         goHandViewByChild()
+                        cardRecyclerView.let {
+                            it.setHasFixedSize(true)
+                            it.layoutManager = LinearLayoutManager(this@MainActivity, LinearLayoutManager.HORIZONTAL, false)
+                            val cardAdapter = CardAdapter(childLogic.sortCardList, this@MainActivity)
+                            it.adapter = cardAdapter
+                        }
                     } else if (message.receiverAction == ReceiverAction.GetCard) {
                         childLogic.receiveCard(message.cardList)
-                        parentLogic.changeToNextTurn()
-                    }
-
-                    cardRecyclerView.let {
-                        it.setHasFixedSize(true)
-                        it.layoutManager = LinearLayoutManager(this@MainActivity, LinearLayoutManager.HORIZONTAL, false)
-                        val cardAdapter = CardAdapter(childLogic.sortCardList, this@MainActivity)
-                        it.adapter = cardAdapter
+                        setCardsList()
+                        if (isParent) {
+                            parentLogic.changeToNextTurn()
+                        }
                     }
                 }
             }
@@ -150,13 +153,14 @@ class MainActivity : AppCompatActivity() {
             isParent = true
             parentLogic.addPlayer(ParentLogic.PARENT_ID)
             parentLogic.setPlayerPositionById(ParentLogic.PARENT_ID)
-            AlertDialog.Builder(this)
-                    .setTitle("何人参加しますか")
-                    .setItems(arrayOf("2", "3", "4", "5")) { _: DialogInterface, i: Int ->
-                        participantNumber = i + 2
-                        startDiscoveryWithPermissionCheck(endpointDiscoveryCallback)
-                    }
-                    .create().show()
+//            AlertDialog.Builder(this)
+//                    .setTitle("何人参加しますか")
+//                    .setItems(arrayOf("2", "3", "4", "5")) { _: DialogInterface, i: Int ->
+//                        participantNumber = i + 2
+//                        startDiscoveryWithPermissionCheck(endpointDiscoveryCallback)
+//                    }
+//                    .create().show()
+            startDiscoveryWithPermissionCheck(endpointDiscoveryCallback)
             goConnectingView()
         }
         enterRoom.setOnClickListener {
@@ -303,14 +307,19 @@ class MainActivity : AppCompatActivity() {
     fun onMessageEvent(event: MessageEvent) {
         logD("onMessageEvent  ${event.position}")
         val card = childLogic.sendCard(event.position + 1)
-        val cardAdapter = CardAdapter(childLogic.sortCardList, this@MainActivity)
-        cardRecyclerView.adapter = cardAdapter
+        setCardsList()
         val msg = ConnectionMessage.createStrMsg(ReceiverAction.GetCard, card)
         if (isParent) {
             sendPayload(this, parentLogic.recievePlayer.id, msg)
+            parentLogic.changeToNextTurn()
         } else {
             sendPayload(this, childLogic.getParentId(), msg)
         }
+    }
+
+    private fun setCardsList() {
+        val cardAdapter = CardAdapter(childLogic.sortCardList, this@MainActivity)
+        cardRecyclerView.adapter = cardAdapter
     }
 
 }
