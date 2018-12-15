@@ -170,6 +170,7 @@ class MainActivity : AppCompatActivity() {
         startAdvertisingWithPermissionCheck(connectionLifecycleCallback)
         makeRoom.setOnClickListener {
             isParent = true
+            turnEndButton.isEnabled = true
             parentLogic.addPlayer(ParentLogic.PARENT_ID)
             parentLogic.setPlayerPositionById(ParentLogic.PARENT_ID)
             startDiscoveryWithPermissionCheck(endpointDiscoveryCallback)
@@ -250,16 +251,6 @@ class MainActivity : AppCompatActivity() {
             val cardAdapter = CardAdapter(backCards, this@MainActivity)
             cardRecyclerView.adapter = cardAdapter
         }
-        gameStartButton.setOnClickListener {
-            isSender = true
-            gameStartButton.visibility = View.GONE
-            val backCards = mutableListOf<Card>()
-            var count = 0
-            while (count < childLogic.sortCardList.size) {
-                backCards.add(Card("back", 0))
-                count++
-            }
-        }
     }
 
     private fun goConnectingView() {
@@ -284,7 +275,6 @@ class MainActivity : AppCompatActivity() {
     private fun goHandView() {
         dealView.visibility = View.GONE
         cardsView.visibility = View.VISIBLE
-        gameStartButton.visibility = View.VISIBLE
     }
 
     private fun goHandViewByChild() {
@@ -294,6 +284,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun goFinishView() {
         cardsView.visibility = View.GONE
+        finishedView.visibility = View.VISIBLE
     }
 
 
