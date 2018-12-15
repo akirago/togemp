@@ -115,7 +115,7 @@ class MainActivity : AppCompatActivity() {
                     logD("onPayloadReceived $endpointId")
                     // getCard()
                 } else {
-                    if (isParent && endpointId != ParentLogic.PARENT_ID) {
+                    if (isParent && parentLogic.recievePlayer.id != ParentLogic.PARENT_ID) {
                         sendPayload(this@MainActivity, parentLogic.recievePlayer.id, it)
                         parentLogic.changeToNextTurn()
                         return@also
@@ -143,7 +143,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-
 
     //ここからスタート
     override fun onCreate(savedInstanceState: Bundle?) {
