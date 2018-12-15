@@ -1,6 +1,10 @@
 package com.example.hashimotoakira.togemp
 
 import android.Manifest
+import android.hardware.Sensor
+import android.hardware.SensorEvent
+import android.hardware.SensorEventListener
+import android.hardware.SensorManager
 import android.os.Bundle
 import android.os.Handler
 import android.view.View
@@ -27,7 +31,33 @@ import permissions.dispatcher.RuntimePermissions
 
 
 @RuntimePermissions
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), SensorEventListener {
+
+    lateinit var sensorManager: SensorManager
+
+    override fun onAccuracyChanged(p0: Sensor?, p1: Int) {
+
+    }
+
+    override fun onSensorChanged(event: SensorEvent?) {
+        if (event?.sensor?.type == Sensor.TYPE_ORIENTATION) {
+            if (cardsView.visibility == View.VISIBLE && isSender) {
+                if (event.values[SensorManager.DATA_Z] > 75) {
+                    val cardAdapter = CardAdapter(childLogic.sortCardList, this@MainActivity)
+                    cardRecyclerView.adapter = cardAdapter
+                } else {
+                    val backCards = mutableListOf<Card>()
+                    var count = 0
+                    while (count < childLogic.sortCardList.size) {
+                        backCards.add(Card("back", 0))
+                        count++
+                    }
+                    val cardAdapter = CardAdapter(backCards, this@MainActivity)
+                    cardRecyclerView.adapter = cardAdapter
+                }
+            }
+        }
+    }
 
     private var isParent = false
 
@@ -167,7 +197,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        startAdvertisingWithPermissionCheck(connectionLifecycleCallback)
+        sensorManager = getSystemService(SENSOR_SERVICE) as SensorManager
         makeRoom.setOnClickListener {
             isParent = true
             turnEndButton.isEnabled = true
@@ -177,6 +207,7 @@ class MainActivity : AppCompatActivity() {
             goConnectingView()
         }
         enterRoom.setOnClickListener {
+            startAdvertisingWithPermissionCheck(connectionLifecycleCallback)
             goConnectingView()
         }
         nextButton.setOnClickListener {
@@ -353,10 +384,16 @@ class MainActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
         EventBus.getDefault().register(this)
+        val sensors = sensorManager.getSensorList(Sensor.TYPE_ORIENTATION)
+        if (sensors.size > 0) {
+            val sensor = sensors[0]
+            sensorManager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_UI)
+        }
     }
 
     override fun onStop() {
         EventBus.getDefault().unregister(this)
+        sensorManager.unregisterListener(this)
         super.onStop()
     }
 
