@@ -1,5 +1,6 @@
 package com.example.hashimotoakira.togemp.logic;
 
+import java.util.ArrayList;
 import java.util.List;
 
 // 親が管理する、各プレイヤーの情報
@@ -34,9 +35,8 @@ public class PlayerInfo {
         this.cardCount = cardCount;
     }
 
-
-    public void setInitialHands(List<Card> initialHands) {
-        this.initialHands = initialHands;
+    public void createEmptyHands(){
+        this.initialHands = new ArrayList<>();
     }
 
     public List<Card> getInitialHands() {

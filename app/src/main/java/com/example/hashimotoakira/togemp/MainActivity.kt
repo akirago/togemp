@@ -9,6 +9,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.hashimotoakira.togemp.logic.Card
 import com.example.hashimotoakira.togemp.logic.ChildLogic
+import com.example.hashimotoakira.togemp.logic.ConnectionMessage
+import com.example.hashimotoakira.togemp.logic.ConnectionMessage.*
 import com.example.hashimotoakira.togemp.logic.ParentLogic
 import com.example.hashimotoakira.togemp.util.*
 import com.google.android.gms.nearby.Nearby
@@ -24,8 +26,6 @@ import java.lang.Exception
 class MainActivity : AppCompatActivity() {
 
     private var isParent = false
-
-    private var parentId = ""
 
     private var participantNumber = 0
 
@@ -71,8 +71,7 @@ class MainActivity : AppCompatActivity() {
         // requestConnectionの後に呼ばれる
         override fun onConnectionInitiated(endpointId: String, connectionInfo: ConnectionInfo) {
             logD("connectionLifecycleCallback onConnectionInitiated endpointId = $endpointId ")
-            if (!isParent && parentId.isEmpty()) {
-                parentId = endpointId
+            if (!isParent) {
                 childLogic.setParentId(endpointId)
             }
             acceptConnections(this@MainActivity, endpointId, payloadCallback)
@@ -113,10 +112,24 @@ class MainActivity : AppCompatActivity() {
                     // getCard()
                 } else {
                     showToast(this@MainActivity, it)
+                    val message = ConnectionMessage.parseStrMsg(it)
+
+                    childLogic.createHands(message.cardList)
+
+                    cardRecyclerView.let {
+                        it.setHasFixedSize(true)
+                        it.layoutManager = LinearLayoutManager(this@MainActivity, LinearLayoutManager.HORIZONTAL, false)
+                        val cardAdapter = CardAdapter(message.cardList, this@MainActivity)
+                        cardAdapter.setClickListener(object : CardViewHolder.ItemClickListener {
+                            override fun onItemClick(view: View, position: Int) {
+
+                            }
+                        })
+                        it.adapter = cardAdapter
+                    }
                 }
             }
         }
-
     }
 
 
@@ -145,7 +158,32 @@ class MainActivity : AppCompatActivity() {
             goShufflingView()
         }
         shuffleButton.setOnClickListener {
-            throw Exception()
+            parentLogic.createHands()
+            goDealView()
+        }
+        dealButton.setOnClickListener {
+            var playerCount = 0
+            while (playerCount < parentLogic.playerInfoCount) {
+                parentLogic.getPlayerInitialHands(playerCount).let {pair ->
+                    if (pair.first == ParentLogic.PARENT_ID) {
+                        cardRecyclerView.let {
+                            it.setHasFixedSize(true)
+                            it.layoutManager = LinearLayoutManager(this@MainActivity, LinearLayoutManager.HORIZONTAL, false)
+                            val cardAdapter = CardAdapter(pair.second, this@MainActivity)
+                            cardAdapter.setClickListener(object : CardViewHolder.ItemClickListener {
+                                override fun onItemClick(view: View, position: Int) {
+
+                                }
+                            })
+                            it.adapter = cardAdapter
+                        }
+                    } else {
+                        sendPayload(this@MainActivity,
+                                pair.first,
+                                createStrMsg(ReceiverAction.GetCard, pair.second))
+                    }
+                }
+            }
         }
 //        cardRecyclerView.let {
 //            it.setHasFixedSize(true)
@@ -172,6 +210,11 @@ class MainActivity : AppCompatActivity() {
     private fun goShufflingView() {
         connectingView.visibility = View.GONE
         shuffleView.visibility = View.VISIBLE
+    }
+
+    private fun goDealView() {
+        shuffleView.visibility = View.GONE
+        dealView.visibility = View.VISIBLE
     }
 
 
