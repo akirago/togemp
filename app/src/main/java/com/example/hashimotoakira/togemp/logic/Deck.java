@@ -6,28 +6,40 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class Deck {
-    public List<Card> deck;
+    public List<Card> cardList;
 
     // 初期化で52枚カードとジョーカを生成してシャッフル
     public Deck() {
-        this.deck = new LinkedList<>();
+        this.cardList = new LinkedList<>();
         List<String> suitList = Arrays.asList("spade", "hart", "dia", "clover");
         for (String suit : suitList) {
             for (int i = 1; i <= 13; i++) {
-                deck.add(new Card(suit, i));
+                cardList.add(new Card(suit, i));
             }
         }
         Card joker = new Card("joker",0);
-        this.deck.add(joker);
-        Collections.shuffle(deck);
+        this.cardList.add(joker);
+        Collections.shuffle(cardList);
+    }
+
+    public boolean isEmpty(){
+        return cardList.isEmpty();
+    }
+
+    // デッキからカードをドローする
+    public Card draw(){
+        int lastIndexOfCardList = cardList.size() - 1;
+        Card drawnCard = cardList.get(lastIndexOfCardList);
+        cardList.remove(lastIndexOfCardList);
+        return drawnCard;
     }
 
 //    public  Optional<Card> getCard {
-//        if (this.deck.size() == 0) {
+//        if (this.cardList.size() == 0) {
 //            return Optional.empty();
 //        }
-//        Card card = this.deck.get(0);
-//        this.deck.remove(0);
+//        Card card = this.cardList.get(0);
+//        this.cardList.remove(0);
 //        return Optional.of(card);
 //    }
 }
