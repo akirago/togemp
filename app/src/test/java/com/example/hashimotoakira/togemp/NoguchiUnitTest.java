@@ -12,6 +12,7 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 public class NoguchiUnitTest {
 
@@ -66,7 +67,10 @@ public class NoguchiUnitTest {
         });
 
         System.out.println("\n--------一枚引く--------");
-        childLogic.recieveCard("c", 1);
+        Card testCard = new Card("t", 1);
+        ArrayList<Card> testCardList = new ArrayList<>();
+        testCardList.add(testCard);
+        childLogic.receiveCard(testCardList);
         childLogic.getHands().forEach(myHand -> {
             System.out.println( "カード マーク: " + myHand.getCard().suit + " 数字: " + myHand.getCard().number + " 順番: " + myHand.getHandPosition());
         });
@@ -82,6 +86,15 @@ public class NoguchiUnitTest {
         childLogic.discard(1, 2);
         childLogic.getHands().forEach(myHand -> {
             System.out.println( "カード マーク: " + myHand.getCard().suit + " 数字: " + myHand.getCard().number + " 順番: " + myHand.getHandPosition());
+        });
+
+        System.out.println("\n--------カードの順番を入れ替える--------");
+        childLogic.changeHandsPosition();
+//        childLogic.getHands().forEach(myHand -> {
+//            System.out.println( "カード マーク: " + myHand.getCard().suit + " 数字: " + myHand.getCard().number + " 順番: " + myHand.getHandPosition());
+//        });
+        childLogic.getSortCardList().forEach(card -> {
+            System.out.println( "カード マーク: " + card.suit + " 数字: " + card.number);
         });
     }
 }
