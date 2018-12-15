@@ -6,6 +6,8 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.hashimotoakira.togemp.logic.Card
 import com.example.hashimotoakira.togemp.logic.ChildLogic
 import com.example.hashimotoakira.togemp.logic.ParentLogic
 import com.example.hashimotoakira.togemp.util.*
@@ -145,6 +147,17 @@ class MainActivity : AppCompatActivity() {
         shuffleButton.setOnClickListener {
             throw Exception()
         }
+//        cardRecyclerView.let {
+//            it.setHasFixedSize(true)
+//            it.layoutManager = LinearLayoutManager(this@MainActivity, LinearLayoutManager.HORIZONTAL, false)
+//            val cardAdapter = CardAdapter(cards, this@MainActivity)
+//            cardAdapter.setClickListener(object : CardViewHolder.ItemClickListener {
+//                override fun onItemClick(view: View, position: Int) {
+//
+//                }
+//            })
+//            it.adapter = cardAdapter
+//        }
     }
 
     private fun goConnectingView() {

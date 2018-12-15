@@ -78,13 +78,16 @@ public class ChildLogic {
     }
 
     // 手札が引かれた際に呼ばれる
-    // 手札を一枚捨てる
-    public void sendCard(int targetHandPosition){
+    // 手札を一枚捨てて、捨てたカード（渡したカード）を返す
+    public Card sendCard(int targetHandPosition){
         int index = 0;
+        Card card = null;
         for (Hand hand : hands) {
             int handPosition = hand.getHandPosition();
             if ( targetHandPosition == handPosition){
+                card = hand.getCard();
                 hands.remove(index);
+                break;
             }
         }
 
@@ -94,5 +97,7 @@ public class ChildLogic {
             hand.setHandPosition(newHandPosition);
             newHandPosition++;
         }
+
+        return card;
     }
 }

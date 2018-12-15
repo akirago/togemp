@@ -1,6 +1,12 @@
 package com.example.hashimotoakira.togemp.logic;
 
 public class Card {
+    /*
+        clover = c
+        spade = s
+        heart = h
+        dia = d
+     */
     public  String suit;
     public  int number;
 
