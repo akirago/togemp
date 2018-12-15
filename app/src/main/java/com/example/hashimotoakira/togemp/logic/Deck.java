@@ -17,7 +17,7 @@ public class Deck {
                 cardList.add(new Card(suit, i));
             }
         }
-        Card joker = new Card("joker",0);
+        Card joker = new Card("joker0",0);
         this.cardList.add(joker);
         Collections.shuffle(cardList);
     }

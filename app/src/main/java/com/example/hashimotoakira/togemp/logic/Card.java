@@ -19,3 +19,4 @@ public class Card {
         this.number = number;
     }
 }
+
