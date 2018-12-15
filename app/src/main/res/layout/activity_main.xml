@@ -14,17 +14,17 @@
         android:visibility="visible">
 
         <ImageView
-            android:src="@drawable/screen_start"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scaleType="centerCrop" />
+            android:scaleType="centerCrop"
+            android:src="@drawable/screen_start" />
 
         <Button
             android:id="@+id/makeRoom"
             android:layout_width="160dp"
             android:layout_height="56dp"
-            android:text="部屋を作る"
             android:background="#BB0011"
+            android:text="部屋を作る"
             android:textColor="#fff"
             android:textFontWeight="bold"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -38,8 +38,8 @@
             android:id="@+id/enterRoom"
             android:layout_width="160dp"
             android:layout_height="56dp"
-            android:text="部屋に入る"
             android:background="#CCC"
+            android:text="部屋に入る"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
@@ -61,11 +61,12 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1">
+
             <ImageView
-                android:src="@drawable/screen_connect"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="#b01" />
+                android:background="#b01"
+                android:src="@drawable/screen_connect" />
         </RelativeLayout>
 
         <RelativeLayout
@@ -76,41 +77,40 @@
 
             <androidx.appcompat.widget.LinearLayoutCompat
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" >
+                android:layout_height="wrap_content">
 
                 <TextView
-                android:id="@+id/playerCount"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="1"
-                android:textSize="48sp"
-                android:visibility="gone" />
+                    android:id="@+id/playerCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="1"
+                    android:textSize="48sp"
+                    android:visibility="gone" />
 
                 <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="32sp"
-                android:text="人接続中..." />
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="人接続中..."
+                    android:textSize="32sp" />
 
             </androidx.appcompat.widget.LinearLayoutCompat>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="※ 2〜5人で遊べます"
                 android:layout_marginTop="72dp"
-                />
+                android:text="※ 2〜5人で遊べます" />
 
             <Button
                 android:id="@+id/nextButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="120dp"
+                android:background="#b01"
                 android:enabled="false"
                 android:text="次へ"
-                android:visibility="gone"
                 android:textColor="#fff"
-                android:background="#b01"
+                android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
@@ -155,20 +155,32 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <FrameLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/cardsView"
         android:layout_width="match_parent"
-        android:layout_height="182dp"
-        app:layout_constraintTop_toTopOf="parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:visibility="gone">
+        app:layout_constraintTop_toTopOf="parent">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/cardRecyclerView"
             android:layout_width="match_parent"
+            android:layout_height="182dp"
             android:scrollbars="vertical"
-            android:layout_height="182dp" />
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    </FrameLayout>
+        <Button
+            android:id="@+id/turnEndButton"
+            android:text="TurnEnd"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
