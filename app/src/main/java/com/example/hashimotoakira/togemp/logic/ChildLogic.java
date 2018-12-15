@@ -104,6 +104,7 @@ public class ChildLogic {
                 hands.remove(index);
                 break;
             }
+            index++;
         }
 
         // 手札の位置番号を振り直す
