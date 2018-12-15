@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.GlideDrawableImageViewTarget
+import com.example.hashimotoakira.togemp.logic.Card
 import com.example.hashimotoakira.togemp.logic.ChildLogic
 import com.example.hashimotoakira.togemp.logic.ConnectionMessage
 import com.example.hashimotoakira.togemp.logic.ConnectionMessage.ReceiverAction
@@ -166,6 +167,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        startAdvertisingWithPermissionCheck(connectionLifecycleCallback)
         makeRoom.setOnClickListener {
             isParent = true
             parentLogic.addPlayer(ParentLogic.PARENT_ID)
@@ -174,7 +176,6 @@ class MainActivity : AppCompatActivity() {
             goConnectingView()
         }
         enterRoom.setOnClickListener {
-            startAdvertisingWithPermissionCheck(connectionLifecycleCallback)
             goConnectingView()
         }
         nextButton.setOnClickListener {
@@ -183,7 +184,7 @@ class MainActivity : AppCompatActivity() {
             Glide.with(this).load(R.raw.anim01_prompt_shuffle).into(target)
         }
         shuffleButton.setOnClickListener {
-            parentLogic.createHands(4)
+            parentLogic.createHands(1)
 
             shuffleButton.visibility = View.GONE
             shufflingText.visibility = View.GONE
@@ -240,10 +241,24 @@ class MainActivity : AppCompatActivity() {
         turnEndButton.setOnClickListener {
             isSender = true
             turnEndButton.isEnabled = false
+            val backCards = mutableListOf<Card>()
+            var count = 0
+            while (count < childLogic.sortCardList.size) {
+                backCards.add(Card("back", 0))
+                count++
+            }
+            val cardAdapter = CardAdapter(backCards, this@MainActivity)
+            cardRecyclerView.adapter = cardAdapter
         }
         gameStartButton.setOnClickListener {
             isSender = true
             gameStartButton.visibility = View.GONE
+            val backCards = mutableListOf<Card>()
+            var count = 0
+            while (count < childLogic.sortCardList.size) {
+                backCards.add(Card("back", 0))
+                count++
+            }
         }
     }
 
