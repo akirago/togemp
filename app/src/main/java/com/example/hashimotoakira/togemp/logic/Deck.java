@@ -22,6 +22,19 @@ public class Deck {
         Collections.shuffle(cardList);
     }
 
+    public Deck(int cardMaxNumber) {
+        this.cardList = new LinkedList<>();
+        List<String> suitList = Arrays.asList("s", "h", "d", "c");
+        for (String suit : suitList) {
+            for (int i = 1; i <= cardMaxNumber; i++) {
+                cardList.add(new Card(suit, i));
+            }
+        }
+        Card joker = new Card("joker",0);
+        this.cardList.add(joker);
+        Collections.shuffle(cardList);
+    }
+
     public boolean isEmpty(){
         return cardList.isEmpty();
     }

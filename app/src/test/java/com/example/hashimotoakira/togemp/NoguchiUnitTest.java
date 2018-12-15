@@ -89,7 +89,7 @@ public class NoguchiUnitTest {
         childLogic.getSortCardList().forEach(card -> {
             System.out.println( "カード マーク: " + card.suit + " 数字: " + card.number);
         });
-        boolean discarded = childLogic.discard(childLogic.getSortCardList().size(), childLogic.getSortCardList().size() - 1);
+        boolean discarded = childLogic.discard(childLogic.getSortCardList().size() - 1, childLogic.getSortCardList().size());
         System.out.println("\n--------捨てたあと--------");
         System.out.println("成功?: " + discarded);
         childLogic.getSortCardList().forEach(card -> {
@@ -97,7 +97,7 @@ public class NoguchiUnitTest {
         });
 
         System.out.println("\n--------カードの順番を入れ替える--------");
-        childLogic.changeHandsPosition();
+        childLogic.shuffleCards();
 //        childLogic.getHands().forEach(myHand -> {
 //            System.out.println( "カード マーク: " + myHand.getCard().suit + " 数字: " + myHand.getCard().number + " 順番: " + myHand.getHandPosition());
 //        });
@@ -108,10 +108,8 @@ public class NoguchiUnitTest {
         System.out.println("\n--------順位をつけていく--------");
         for (int i = 0; i < parentLogic.getPlayerInfoList().size(); i++) {
             PlayerInfo playerInfo = parentLogic.getPlayerInfoList().get(i);
-            parentLogic.setPlayerRank(playerInfo.getId());
+            int rank = parentLogic.finishPlaying(playerInfo.getId());
+            System.out.println("プレイヤーID: " + playerInfo.getId() + " 順位: " + rank);
         }
-        parentLogic.getPlayerInfoList().forEach(playerInfo -> {
-            System.out.println("プレイヤーID: " + playerInfo.getId() + " 順位: " + playerInfo.getRank());
-        });
     }
 }

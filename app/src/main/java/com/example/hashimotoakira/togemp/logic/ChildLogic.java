@@ -57,6 +57,10 @@ public class ChildLogic {
      * @return カードを捨てることに成功したかどうか
      */
     public boolean discard(int firstHandPosition, int secondHandPosition){
+        if (firstHandPosition == secondHandPosition) {
+            return false;
+        }
+
         Hand firstHand = hands.stream().filter(hand -> firstHandPosition == hand.getHandPosition()).findFirst().get();
         Hand secondHand = hands.stream().filter(hand -> secondHandPosition == hand.getHandPosition()).findFirst().get();
 
@@ -149,9 +153,9 @@ public class ChildLogic {
     }
 
     /**
-     * 手札の位置を入れ替える
+     * 手札の位置をシャッフルする
      */
-    public void changeHandsPosition(){
+    public void shuffleCards(){
         int handsSize = hands.size();
         List<Integer> positionList = new ArrayList<>();
         for (int i = 1; i <= handsSize; i++) {
