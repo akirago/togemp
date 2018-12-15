@@ -89,7 +89,7 @@ public class NoguchiUnitTest {
         childLogic.getSortCardList().forEach(card -> {
             System.out.println( "カード マーク: " + card.suit + " 数字: " + card.number);
         });
-        boolean discarded = childLogic.discard(childLogic.getSortCardList().size(), childLogic.getSortCardList().size() - 1);
+        boolean discarded = childLogic.discard(childLogic.getSortCardList().size() - 1, childLogic.getSortCardList().size());
         System.out.println("\n--------捨てたあと--------");
         System.out.println("成功?: " + discarded);
         childLogic.getSortCardList().forEach(card -> {
