@@ -179,35 +179,51 @@ class MainActivity : AppCompatActivity() {
 
             val target = GlideDrawableImageViewTarget(shufflingView)
             Glide.with(this).load(R.raw.anim02_shuffle).into(target)
-            // 4.333秒たったら元のViewに戻す
+
+            // 4.333秒たったら次のViewへ
             val runnable = Runnable {
                 goDealView()
+                val target = GlideDrawableImageViewTarget(dealButton)
+                Glide.with(this).load(R.raw.anim03_prompt_deal).into(target)
             }
             Handler().postDelayed(runnable, 4333)
         }
         dealButton.setOnClickListener {
-            var playerCount = 1
-            logD("dealButton  start")
-            while (playerCount < parentLogic.playerInfoCount + 1) {
-                parentLogic.getPlayerInitialHands(playerCount).let {pair ->
-                    logD("dealButton  ${pair.second[0].suit}    ${pair.second[0].number}")
-                    if (pair.first == ParentLogic.PARENT_ID) {
-                        childLogic.createHands(pair.second)
-                        cardRecyclerView.let {
-                            it.setHasFixedSize(true)
-                            it.layoutManager = LinearLayoutManager(this@MainActivity, LinearLayoutManager.HORIZONTAL, false)
-                            val cardAdapter = CardAdapter(pair.second, this@MainActivity)
-                            it.adapter = cardAdapter
-                            goHandView()
+
+            dealButton.visibility = View.GONE
+            dealingText.visibility = View.GONE
+            dealingView.visibility = View.VISIBLE
+
+            val target = GlideDrawableImageViewTarget(dealingView)
+            Glide.with(this).load(R.raw.anim04_deal).into(target)
+
+            // 2秒たったら次のViewへ
+            val runnable = Runnable {
+                var playerCount = 1
+                logD("dealButton  start")
+                while (playerCount < parentLogic.playerInfoCount + 1) {
+                    parentLogic.getPlayerInitialHands(playerCount).let {pair ->
+                        logD("dealButton  ${pair.second[0].suit}    ${pair.second[0].number}")
+                        if (pair.first == ParentLogic.PARENT_ID) {
+                            childLogic.createHands(pair.second)
+                            cardRecyclerView.let {
+                                it.setHasFixedSize(true)
+                                it.layoutManager = LinearLayoutManager(this@MainActivity, LinearLayoutManager.HORIZONTAL, false)
+                                val cardAdapter = CardAdapter(pair.second, this@MainActivity)
+                                it.adapter = cardAdapter
+                                goHandView()
+                            }
+                        } else {
+                            sendPayload(this@MainActivity,
+                                    pair.first,
+                                    createStrMsg(ReceiverAction.DealCard, pair.second))
                         }
-                    } else {
-                        sendPayload(this@MainActivity,
-                                pair.first,
-                                createStrMsg(ReceiverAction.DealCard, pair.second))
                     }
+                    playerCount++
                 }
-                playerCount++
             }
+            Handler().postDelayed(runnable, 2000)
+
         }
         turnEndButton.setOnClickListener {
             if (isParent) {

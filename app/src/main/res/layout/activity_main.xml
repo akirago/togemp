@@ -162,14 +162,33 @@
         android:layout_height="match_parent"
         android:visibility="gone">
 
-        <Button
+        <ImageView
             android:id="@+id/dealButton"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop" />
+
+        <TextView
+            android:id="@+id/dealingText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="配る！！！"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:layout_marginStart="8dp"
+            android:layout_marginBottom="8dp"
+            android:text="スワイプして配る"
+            android:textColor="#fff"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toBottomOf="@+id/dealView"
+            app:layout_constraintEnd_toEndOf="@+id/dealView"
+            app:layout_constraintStart_toStartOf="@+id/dealView"
+            app:layout_constraintTop_toTopOf="@+id/dealView" />
+
+
+        <ImageView
+            android:id="@+id/dealingView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:visibility="gone" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
