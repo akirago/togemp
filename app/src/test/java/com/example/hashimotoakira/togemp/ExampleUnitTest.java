@@ -67,5 +67,15 @@ public class ExampleUnitTest {
         parentLogic.changeToNextTurn();
         // 次はb
         System.out.print(parentLogic.getSendPlayer().getId());
+        parentLogic.changeToNextTurn();
+        parentLogic.changeToNextTurn();
+        // また親に戻って来る
+        System.out.print(parentLogic.getSendPlayer().getId());
+
+        // aが0まいで終了
+        parentLogic.updatePlayerHandsCount("a", 0);
+        // 親の次がbになっている
+        parentLogic.changeToNextTurn();
+        System.out.print(parentLogic.getSendPlayer().getId());
     }
 }

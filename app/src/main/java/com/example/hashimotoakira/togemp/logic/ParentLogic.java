@@ -90,18 +90,21 @@ public class ParentLogic {
         playerInfo.setCardCount(cardCount);
     }
 
+    // 次のターンに切り替える
     public void changeToNextTurn() {
         PlayerInfo currentPlayer = getSendPlayer();
-        PlayerInfo nextPlayer = getNextPlayer();
+        PlayerInfo nextPlayer = getRecievePlayer();
         currentPlayer.setSendCardPlayer(false);
         nextPlayer.setSendCardPlayer(true);
     }
 
+    // カードを送信するプレイヤーを取得する
     public PlayerInfo getSendPlayer() {
         return playerInfoList.stream().filter(playerInfo -> playerInfo.isSendCardPlayer()).findFirst().get();
     }
 
-    public PlayerInfo getNextPlayer() {
+    // カードを受け取りプレイヤーを取得する.存在しない場合はnullが返る
+    public PlayerInfo getRecievePlayer() {
         // ポジションごとに並び替え
         List<PlayerInfo> restPlayerList = playerInfoList.stream().filter(playerInfo -> playerInfo.getCardCount() != 0).sorted(Comparator.comparing(PlayerInfo::getPosition)).collect(Collectors.toList());
         if (restPlayerList.isEmpty()) {
