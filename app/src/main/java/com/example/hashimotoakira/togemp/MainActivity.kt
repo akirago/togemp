@@ -110,19 +110,25 @@ class MainActivity : AppCompatActivity() {
 
         override fun onPayloadReceived(endpointId: String, payload: Payload) {
             String(payload.asBytes()!!).also {
+                showToast(this@MainActivity, it)
+                logD("onPayloadReceived  $it")
                 if (it == "start") { // 親がコネクション完了通知で、子が子同士通信するためにrequestする流れ
                     logD("onPayloadReceived $endpointId")
                     // getCard()
                 } else {
                     val message = ConnectionMessage.parseStrMsg(it)
+                    if (message.receiverAction == ReceiverAction.DealCard) {
+                        childLogic.createHands(message.cardList)
+                    } else if (message.receiverAction == ReceiverAction.GetCard) {
+                        childLogic.receiveCard(message.cardList)
 
-                    childLogic.createHands(message.cardList)
+                    }
 
                     cardRecyclerView.let {
                         it.setHasFixedSize(true)
                         it.layoutManager = LinearLayoutManager(this@MainActivity, LinearLayoutManager.HORIZONTAL, false)
-                        val cardAdapter = CardAdapter(message.cardList, this@MainActivity, childLogic)
-                        it.adapter = cardAdapter
+//                        val cardAdapter = CardAdapter(childLogic.getHands(), this@MainActivity)
+//                        it.adapter = cardAdapter
                     }
                     goHandViewByChild()
                 }
@@ -170,7 +176,7 @@ class MainActivity : AppCompatActivity() {
                         cardRecyclerView.let {
                             it.setHasFixedSize(true)
                             it.layoutManager = LinearLayoutManager(this@MainActivity, LinearLayoutManager.HORIZONTAL, false)
-                            val cardAdapter = CardAdapter(pair.second, this@MainActivity, childLogic)
+                            val cardAdapter = CardAdapter(pair.second, this@MainActivity)
                             it.adapter = cardAdapter
                             goHandView()
                         }
@@ -290,9 +296,13 @@ class MainActivity : AppCompatActivity() {
     // This method will be called when a MessageEvent is posted
     @Subscribe
     fun onMessageEvent(event: MessageEvent) {
-        val card = childLogic.sendCard(event.position)
-        ConnectionMessage.createStrMsg(ReceiverAction.GetCard, card)
-//        parentLogic.
+        val card = childLogic.sendCard(event.position + 1)
+        val msg = ConnectionMessage.createStrMsg(ReceiverAction.GetCard, card)
+        if (isParent) {
+            sendPayload(this, parentLogic.recievePlayer.id, msg)
+        } else {
+            sendPayload(this, childLogic.getParentId(), msg)
+        }
     }
 
 }

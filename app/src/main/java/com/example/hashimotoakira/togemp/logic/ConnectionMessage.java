@@ -38,7 +38,7 @@ public class ConnectionMessage {
     public enum ReceiverAction
     {
         GetCard,
-        TransferCard,
+        DealCard,
     }
 
     public static String createStrMsg(ReceiverAction receiverAction, List<Card> cardList) throws JsonProcessingException {

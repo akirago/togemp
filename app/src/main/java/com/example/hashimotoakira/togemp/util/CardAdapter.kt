@@ -15,7 +15,7 @@ import com.example.hashimotoakira.togemp.logic.ChildLogic
 import org.greenrobot.eventbus.EventBus
 
 
-class CardAdapter(val cardList: List<Card>, val context: Context, val childLogic: ChildLogic) : RecyclerView.Adapter<CardViewHolder>() {
+class CardAdapter(val cardList: List<Card>, val context: Context) : RecyclerView.Adapter<CardViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CardViewHolder {
         return CardViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.card_main,parent, false) as ImageView)

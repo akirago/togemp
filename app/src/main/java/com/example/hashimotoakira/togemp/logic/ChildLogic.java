@@ -78,10 +78,9 @@ public class ChildLogic {
     }
 
     // カードを引いて、手札に加える
-    public void recieveCard(String suit, int number){
-        Card card = new Card(suit, number);
+    public void receiveCard(List<Card> cards){
         Integer maxHandPosition = hands.stream().map(hand -> hand.getHandPosition()).max(Comparator.naturalOrder()).orElse(0);
-        Hand hand = new Hand(card, maxHandPosition + 1);
+        Hand hand = new Hand(cards.get(0), maxHandPosition + 1);
         hands.add(hand);
     }
 

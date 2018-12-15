@@ -1,18 +1,13 @@
 package com.example.hashimotoakira.togemp;
 
-import android.util.Log;
-
 import com.example.hashimotoakira.togemp.logic.Card;
 import com.example.hashimotoakira.togemp.logic.ConnectionMessage;
 import com.example.hashimotoakira.togemp.logic.ParentLogic;
 
 import org.junit.Test;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
-
-import static org.junit.Assert.*;
 
 /**
  * Example local unit test, which will execute on the development machine (host).
@@ -23,7 +18,7 @@ public class ExampleUnitTest {
 
     @Test
     public void addition_isCorrect() throws Exception {
-        ConnectionMessage hoge = new ConnectionMessage(ConnectionMessage.ReceiverAction.TransferCard, Arrays.asList(new Card("sute", 2)));
+        ConnectionMessage hoge = new ConnectionMessage(ConnectionMessage.ReceiverAction.DealCard, Arrays.asList(new Card("sute", 2)));
         System.out.print(hoge.getReceiverAction());
         String fuga = ConnectionMessage.createStrMsg(ConnectionMessage.ReceiverAction.GetCard,  Arrays.asList(new Card("sute", 2)));
         System.out.print(fuga);
