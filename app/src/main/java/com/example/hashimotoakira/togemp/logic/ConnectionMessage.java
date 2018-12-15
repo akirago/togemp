@@ -44,7 +44,7 @@ public class ConnectionMessage {
         GetCard,
         DealCard,
         Finish,
-        SetIsSender
+        TurnChange
     }
 
     public static String createStrMsg(ReceiverAction receiverAction, List<Card> cardList) throws JsonProcessingException {
@@ -62,6 +62,12 @@ public class ConnectionMessage {
     public static String createStrFinishMsg() throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         ConnectionMessage msg = new ConnectionMessage(ReceiverAction.Finish);
+        return mapper.writeValueAsString(msg);
+    }
+
+    public static String createStrTurnChangeMsg() throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        ConnectionMessage msg = new ConnectionMessage(ReceiverAction.TurnChange);
         return mapper.writeValueAsString(msg);
     }
     

@@ -84,6 +84,27 @@ public class ParentLogic {
     }
 
     /**
+     * デッキを作成し、それを元に各プレイヤーの手札を作成する
+     */
+    public void createHands(int cardMaxNumber) {
+        Deck deck = new Deck(cardMaxNumber);
+        for (PlayerInfo playerInfo : playerInfoList) {
+            playerInfo.createEmptyHands();
+        }
+
+        // デッキがなくなるまで配り続ける
+        while (!deck.isEmpty()) {
+            // プレイヤーに等分して配る
+            for (PlayerInfo playerInfo : playerInfoList) {
+                if (deck.isEmpty()) {
+                    break;
+                }
+                playerInfo.draw(deck);
+            }
+        }
+    }
+
+    /**
      * 各プレイヤーの順番を引数で受け取り、そのプレイヤーの初期手札を返す
      * @param position プレイヤーの順番
      * @return プレイヤーのIDと初期手札のペア

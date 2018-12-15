@@ -136,11 +136,11 @@ class MainActivity : AppCompatActivity() {
                     } else if (message.receiverAction == ReceiverAction.GetCard) {
                         childLogic.receiveCard(message.cardList)
                         setCardsList()
-                        isSender = true
                         if (isParent) {
                             parentLogic.changeToNextTurn()
                         }
-                    } else if (message.receiverAction == ReceiverAction.SetIsSender) {
+                        turnEndButton.isEnabled = true
+                    } else if (message.receiverAction == ReceiverAction.TurnChange) {
                         if (isParent) {
                             parentLogic.changeToNextTurn()
                         }
@@ -171,7 +171,7 @@ class MainActivity : AppCompatActivity() {
             Glide.with(this).load(R.raw.anim01_prompt_shuffle).into(target)
         }
         shuffleButton.setOnClickListener {
-            parentLogic.createHands()
+            parentLogic.createHands(4)
 
             shuffleButton.visibility = View.GONE
             shufflingText.visibility = View.GONE
@@ -226,14 +226,17 @@ class MainActivity : AppCompatActivity() {
 
         }
         turnEndButton.setOnClickListener {
+            isSender = false
+            turnEndButton.isEnabled = false
             if (isParent) {
                 parentLogic.changeToNextTurn()
             } else {
-//                sendPayload(this, childLogic.parentId, ConnectionMessage)
+                sendPayload(this, childLogic.parentId, ConnectionMessage.createStrTurnChangeMsg())
             }
         }
         gameStartButton.setOnClickListener {
             isSender = true
+            gameStartButton.visibility = View.GONE
         }
     }
 
@@ -357,6 +360,7 @@ class MainActivity : AppCompatActivity() {
             } else {
                 sendPayload(this, childLogic.parentId, msg)
             }
+            firstPosition = null
         } else {
             if (firstPosition == null) {
                 firstPosition = event.position
