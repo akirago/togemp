@@ -2,8 +2,11 @@ package com.example.hashimotoakira.togemp
 
 import android.Manifest
 import android.content.DialogInterface
+import android.media.Image
 import android.os.Bundle
+import android.os.Handler
 import android.view.View
+import android.widget.ImageView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -21,6 +24,8 @@ import permissions.dispatcher.PermissionRequest
 import permissions.dispatcher.RuntimePermissions
 import org.greenrobot.eventbus.Subscribe
 import android.widget.Toast
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.GlideDrawableImageViewTarget
 import com.example.hashimotoakira.togemp.util.MessageEvent
 import org.greenrobot.eventbus.EventBus
 
@@ -168,10 +173,26 @@ class MainActivity : AppCompatActivity() {
         }
         nextButton.setOnClickListener {
             goShufflingView()
+            val target = GlideDrawableImageViewTarget(shuffleButton)
+            Glide.with(this).load(R.raw.anim01_prompt_shuffle).into(target)
         }
         shuffleButton.setOnClickListener {
             parentLogic.createHands()
-            goDealView()
+
+            val shuffleButton = findViewById<View>(R.id.shuffleButton) as ImageView
+            val shuffilingText = findViewById<View>(R.id.shuffilingText) as TextView
+            val shufflingView = findViewById<View>(R.id.shufflingView) as ImageView
+            shuffleButton.visibility = View.GONE
+            shuffilingText.visibility = View.GONE
+            shufflingView.visibility = View.VISIBLE
+
+            val target = GlideDrawableImageViewTarget(shufflingView)
+            Glide.with(this).load(R.raw.anim02_shuffle).into(target)
+            // 4.333秒たったら元のViewに戻す
+            val runnable = Runnable {
+                goDealView()
+            }
+            Handler().postDelayed(runnable, 4333)
         }
         dealButton.setOnClickListener {
             var playerCount = 1

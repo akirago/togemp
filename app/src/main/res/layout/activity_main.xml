@@ -23,7 +23,7 @@
             android:id="@+id/makeRoom"
             android:layout_width="160dp"
             android:layout_height="56dp"
-            android:background="#BB0011"
+            android:background="@drawable/button_strong_style"
             android:text="部屋を作る"
             android:textColor="#fff"
             android:textFontWeight="bold"
@@ -32,14 +32,14 @@
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.8" />
+            app:layout_constraintVertical_bias="0.798" />
 
         <Button
             android:id="@+id/enterRoom"
             android:layout_width="160dp"
             android:layout_height="56dp"
-            android:background="#CCC"
             android:text="部屋に入る"
+            android:background="@drawable/button_style"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
@@ -55,7 +55,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone">
-
 
         <RelativeLayout
             android:layout_width="0dp"
@@ -103,10 +102,10 @@
 
             <Button
                 android:id="@+id/nextButton"
-                android:layout_width="wrap_content"
+                android:layout_width="160dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="120dp"
-                android:background="#b01"
+                android:background="@drawable/button_strong_style"
                 android:enabled="false"
                 android:text="次へ"
                 android:textColor="#fff"
@@ -127,14 +126,33 @@
         android:layout_height="match_parent"
         android:visibility="gone">
 
-        <Button
+        <ImageView
             android:id="@+id/shuffleButton"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop" />
+
+        <TextView
+            android:id="@+id/shufflingText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="シャッフル！！！"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:layout_marginStart="8dp"
+            android:layout_marginBottom="8dp"
+            android:text="スワイプしてシャッフル"
+            android:textColor="#fff"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toBottomOf="@+id/shuffleView"
+            app:layout_constraintEnd_toEndOf="@+id/shuffleView"
+            app:layout_constraintStart_toStartOf="@+id/shuffleView"
+            app:layout_constraintTop_toTopOf="@+id/shuffleView" />
+
+
+        <ImageView
+            android:id="@+id/shufflingView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:visibility="gone"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
