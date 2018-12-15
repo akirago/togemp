@@ -46,6 +46,7 @@ public class PlayerInfo {
 
     public void createEmptyHands(){
         this.initialHands = new ArrayList<>();
+        setCardCount(0);
     }
 
     public List<Card> getInitialHands() {
@@ -54,6 +55,7 @@ public class PlayerInfo {
 
     public void draw(Deck deck){
         initialHands.add(deck.draw());
+        setCardCount(cardCount + 1);
     }
 
     PlayerInfo(String id) {

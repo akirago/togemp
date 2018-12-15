@@ -16,6 +16,10 @@ public class ParentLogic {
 
     public static final String PARENT_ID = "parent";
 
+    public List<PlayerInfo> getPlayerInfoList() {
+        return playerInfoList;
+    }
+
     public List<PlayerInfo> playerInfoList;
 
     // プレイヤーの参加人数を返す
@@ -67,7 +71,6 @@ public class ParentLogic {
                 playerInfo.draw(deck);
             }
         }
-        logD("dealButton  end");
     }
 
     // 各プレイヤーの順番を引数で受け取り、そのプレイヤーの初期手札を返す
