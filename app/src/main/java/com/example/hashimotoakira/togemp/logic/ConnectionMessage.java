@@ -9,6 +9,7 @@ import java.util.List;
 public class ConnectionMessage {
     public ReceiverAction receiverAction;
     public List<Card> cardList;
+    public int rank;
 
     //  jacksonのライブラリーを使うため空のコンストラクタが必須
     public ConnectionMessage() {
@@ -16,6 +17,11 @@ public class ConnectionMessage {
 
     public ConnectionMessage(ReceiverAction receiverAction) {
         this.receiverAction = receiverAction;
+    }
+
+    public ConnectionMessage(ReceiverAction receiverAction, int rank) {
+        this.receiverAction = receiverAction;
+        this.rank = rank;
     }
 
     public ConnectionMessage(ReceiverAction receiverAction, List<Card> cardList) {
@@ -45,7 +51,8 @@ public class ConnectionMessage {
         DealCard,
         DiscardFinish,
         DrawFinish,
-        YourTurn
+        YourTurn,
+        Rank,
     }
 
     public static String createStrMsg(ReceiverAction receiverAction, List<Card> cardList) throws JsonProcessingException {
@@ -75,6 +82,12 @@ public class ConnectionMessage {
     public static String createStrYourTurnMsg() throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         ConnectionMessage msg = new ConnectionMessage(ReceiverAction.YourTurn);
+        return mapper.writeValueAsString(msg);
+    }
+
+    public static String createStrRankMsg(int rank) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        ConnectionMessage msg = new ConnectionMessage(ReceiverAction.Rank, rank);
         return mapper.writeValueAsString(msg);
     }
     

@@ -25,9 +25,14 @@ public class ExampleUnitTest {
         ConnectionMessage after = ConnectionMessage.parseStrMsg(fuga);
         System.out.print(after.getReceiverAction());
 
-        String finishMsg = ConnectionMessage.createStrFinishMsg();
-        ConnectionMessage finishObj = ConnectionMessage.parseStrMsg(finishMsg);
-        System.out.print(finishObj.getReceiverAction());
+//        String finishMsg = ConnectionMessage.createStrFinishMsg();
+//        ConnectionMessage finishObj = ConnectionMessage.parseStrMsg(finishMsg);
+//        System.out.print(finishObj.getReceiverAction());
+
+        String rankMsg = ConnectionMessage.createStrRankMsg(3);
+        ConnectionMessage rankObj = ConnectionMessage.parseStrMsg(rankMsg);
+        System.out.print(rankObj.rank);
+
     }
 
 
