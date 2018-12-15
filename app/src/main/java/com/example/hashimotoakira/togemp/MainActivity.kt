@@ -120,11 +120,6 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
                 playerCount.text = connectedDeviceCount.toString()
                 if (connectedDeviceCount > 1) {
                     logD("connectionLifecycleCallback onConnectionResult sendPayload")
-                    endpointIds.forEach { toEndpointId ->
-                        sendPayload(this@MainActivity,
-                                toEndpointId,
-                                "start")
-                    }
                     nextButton.isEnabled = true
                 }
             }
@@ -146,7 +141,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
                 logD("onPayloadReceived  $it")
                 if (it == "start") { // 親がコネクション完了通知で、子が子同士通信するためにrequestする流れ
                     logD("onPayloadReceived $endpointId")
-                    // getCard()
+
                 } else {
 
                     val message = ConnectionMessage.parseStrMsg(it)
@@ -208,6 +203,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         }
         enterRoom.setOnClickListener {
             startAdvertisingWithPermissionCheck(connectionLifecycleCallback)
+            connectingTextView.text = "待機中"
             goConnectingView()
         }
         nextButton.setOnClickListener {
@@ -268,7 +264,6 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
                 }
             }
             Handler().postDelayed(runnable, 2000)
-
         }
         turnEndButton.setOnClickListener {
             isSender = true
