@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.view.View
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -42,6 +43,8 @@ class MainActivity : AppCompatActivity() {
     private val parentLogic = ParentLogic()
 
     private val childLogic = ChildLogic()
+
+    private var isSender = false
 
     /**
      * String: endpointId
@@ -80,7 +83,7 @@ class MainActivity : AppCompatActivity() {
         override fun onConnectionInitiated(endpointId: String, connectionInfo: ConnectionInfo) {
             logD("connectionLifecycleCallback onConnectionInitiated endpointId = $endpointId ")
             if (!isParent) {
-                childLogic.setParentId(endpointId)
+                childLogic.parentId = endpointId
             }
             acceptConnections(this@MainActivity, endpointId, payloadCallback)
         }
@@ -122,7 +125,6 @@ class MainActivity : AppCompatActivity() {
                 } else {
                     if (isParent && parentLogic.recievePlayer.id != ParentLogic.PARENT_ID) {
                         sendPayload(this@MainActivity, parentLogic.recievePlayer.id, it)
-                        parentLogic.changeToNextTurn()
                         return@also
                     }
 
@@ -140,6 +142,11 @@ class MainActivity : AppCompatActivity() {
                     } else if (message.receiverAction == ReceiverAction.GetCard) {
                         childLogic.receiveCard(message.cardList)
                         setCardsList()
+                        isSender = true
+                        if (isParent) {
+                            parentLogic.changeToNextTurn()
+                        }
+                    } else if (message.receiverAction == ReceiverAction.SetIsSender) {
                         if (isParent) {
                             parentLogic.changeToNextTurn()
                         }
@@ -155,15 +162,9 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         makeRoom.setOnClickListener {
             isParent = true
+            isSender = true
             parentLogic.addPlayer(ParentLogic.PARENT_ID)
             parentLogic.setPlayerPositionById(ParentLogic.PARENT_ID)
-//            AlertDialog.Builder(this)
-//                    .setTitle("何人参加しますか")
-//                    .setItems(arrayOf("2", "3", "4", "5")) { _: DialogInterface, i: Int ->
-//                        participantNumber = i + 2
-//                        startDiscoveryWithPermissionCheck(endpointDiscoveryCallback)
-//                    }
-//                    .create().show()
             startDiscoveryWithPermissionCheck(endpointDiscoveryCallback)
             goConnectingView()
         }
@@ -173,21 +174,21 @@ class MainActivity : AppCompatActivity() {
         }
         nextButton.setOnClickListener {
             goShufflingView()
-            val target = GlideDrawableImageViewTarget(shuffleButton)
-            Glide.with(this).load(R.raw.anim01_prompt_shuffle).into(target)
+//            val target = GlideDrawableImageViewTarget(shuffleButton)
+//            Glide.with(this).load(R.raw.anim01_prompt_shuffle).into(target)
         }
         shuffleButton.setOnClickListener {
             parentLogic.createHands()
 
             val shuffleButton = findViewById<View>(R.id.shuffleButton) as ImageView
-            val shuffilingText = findViewById<View>(R.id.shuffilingText) as TextView
+//            val shuffilingText = findViewById<View>(R.id.shuffilingText) as TextView
             val shufflingView = findViewById<View>(R.id.shufflingView) as ImageView
             shuffleButton.visibility = View.GONE
-            shuffilingText.visibility = View.GONE
+//            shuffilingText.visibility = View.GONE
             shufflingView.visibility = View.VISIBLE
 
-            val target = GlideDrawableImageViewTarget(shufflingView)
-            Glide.with(this).load(R.raw.anim02_shuffle).into(target)
+//            val target = GlideDrawableImageViewTarget(shufflingView)
+//            Glide.with(this).load(R.raw.anim02_shuffle).into(target)
             // 4.333秒たったら元のViewに戻す
             val runnable = Runnable {
                 goDealView()
@@ -216,6 +217,13 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
                 playerCount++
+            }
+        }
+        turnEndButton.setOnClickListener {
+            if (isParent) {
+                parentLogic.changeToNextTurn()
+            } else {
+//                sendPayload(this, childLogic.parentId, ConnectionMessage)
             }
         }
     }
@@ -326,14 +334,17 @@ class MainActivity : AppCompatActivity() {
     @Subscribe
     fun onMessageEvent(event: MessageEvent) {
         logD("onMessageEvent  ${event.position}")
-        val card = childLogic.sendCard(event.position + 1)
-        setCardsList()
-        val msg = ConnectionMessage.createStrMsg(ReceiverAction.GetCard, card)
-        if (isParent) {
-            sendPayload(this, parentLogic.recievePlayer.id, msg)
-            parentLogic.changeToNextTurn()
-        } else {
-            sendPayload(this, childLogic.getParentId(), msg)
+        if (isSender) {
+            isSender = false
+            val card = childLogic.sendCard(event.position + 1)
+            setCardsList()
+            val msg = ConnectionMessage.createStrMsg(ReceiverAction.GetCard, card)
+            if (isParent) {
+                sendPayload(this, parentLogic.recievePlayer.id, msg)
+                parentLogic.changeToNextTurn()
+            } else {
+                sendPayload(this, childLogic.parentId, msg)
+            }
         }
     }
 

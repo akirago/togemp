@@ -44,6 +44,7 @@ public class ConnectionMessage {
         GetCard,
         DealCard,
         Finish,
+        SetIsSender
     }
 
     public static String createStrMsg(ReceiverAction receiverAction, List<Card> cardList) throws JsonProcessingException {
