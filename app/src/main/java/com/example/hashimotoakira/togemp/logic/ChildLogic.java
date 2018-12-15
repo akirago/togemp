@@ -45,11 +45,19 @@ public class ChildLogic {
     public void discard(int firstHandPosition, int secondHandPosition){
 
         // 引数で渡されたカード位置で探して、該当するものを削除
-        int index = 0;
-        for (Hand hand : hands) {
+        for (int i = 0; i < hands.size(); i++) {
+            Hand hand = hands.get(i);
             int handPosition = hand.getHandPosition();
-            if ( firstHandPosition == handPosition || secondHandPosition == handPosition){
-                hands.remove(index);
+            if ( firstHandPosition == handPosition){
+                hands.remove(i);
+            }
+        }
+
+        for (int i = 0; i < hands.size(); i++) {
+            Hand hand = hands.get(i);
+            int handPosition = hand.getHandPosition();
+            if ( secondHandPosition == handPosition){
+                hands.remove(i);
             }
         }
 
