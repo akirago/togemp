@@ -1,7 +1,9 @@
 package com.example.hashimotoakira.togemp.logic;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 // 子が呼ぶロジック
 public class ChildLogic {
@@ -58,5 +60,36 @@ public class ChildLogic {
     public List<Hand> getHands() {
         return hands;
     }
-    
+
+    // 現在の手札枚数を取得する
+    public int getHandsCount(){
+        return hands.size();
+    }
+
+    // カードを引いて、手札に加える
+    public void recieveCard(String suit, int number){
+        Card card = new Card(suit, number);
+        Integer maxHandPosition = hands.stream().map(hand -> hand.getHandPosition()).max(Comparator.naturalOrder()).orElse(0);
+        Hand hand = new Hand(card, maxHandPosition + 1);
+        hands.add(hand);
+    }
+
+    // 手札が引かれた際に呼ばれる
+    // 手札を一枚捨てる
+    public void sendCard(int targetHandPosition){
+        int index = 0;
+        for (Hand hand : hands) {
+            int handPosition = hand.getHandPosition();
+            if ( targetHandPosition == handPosition){
+                hands.remove(index);
+            }
+        }
+
+        // 手札の位置番号を振り直す
+        int newHandPosition = 1;
+        for (Hand hand : hands) {
+            hand.setHandPosition(newHandPosition);
+            newHandPosition++;
+        }
+    }
 }
