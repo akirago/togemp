@@ -229,4 +229,81 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/connectingView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone">
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="3"
+            android:gravity="center">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="あがり"
+                android:textSize="48sp"
+                android:textColor="#b01" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="72dp"
+                    android:text="あなたは" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="72dp"
+                    android:textSize="24sp"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp"
+                    android:text="1" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="72dp"
+                    android:text="位です。" />
+
+
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/nextButton"
+                android:layout_width="160dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="160dp"
+                android:background="@drawable/button_strong_style"
+                android:enabled="false"
+                android:text="終了"
+                android:textColor="#fff"
+                android:visibility=""
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2">
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#b01"
+                android:src="@drawable/screen_fin_first" />
+        </RelativeLayout>
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>
