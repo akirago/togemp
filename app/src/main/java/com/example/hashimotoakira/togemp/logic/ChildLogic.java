@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 // 子が呼ぶロジック
 public class ChildLogic {
@@ -62,6 +64,12 @@ public class ChildLogic {
     // 現在の手札を取得する
     public List<Hand> getHands() {
         return hands;
+    }
+
+    // 現在の表示するカード一覧を取得する。表示する順番にソートされている。
+    public List<Card> getSortCardList() {
+        return hands.stream().sorted(Comparator.comparing(Hand::getHandPosition))
+                .map(hand -> hand.getCard()).collect(Collectors.toList());
     }
 
     // 現在の手札枚数を取得する
