@@ -183,7 +183,6 @@
             app:layout_constraintStart_toStartOf="@+id/dealView"
             app:layout_constraintTop_toTopOf="@+id/dealView" />
 
-
         <ImageView
             android:id="@+id/dealingView"
             android:layout_width="match_parent"

@@ -237,7 +237,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
             Glide.with(this).load(R.raw.anim01_prompt_shuffle).into(target)
         }
         shuffleButton.setOnClickListener {
-            parentLogic.createHands(1)
+            parentLogic.createHands()
 
             shuffleButton.visibility = View.GONE
             shufflingText.visibility = View.GONE
