@@ -79,6 +79,8 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
 
     private var isSender = false
 
+    private val cardMaxNumber = 4
+
     /**
      * String: endpointId
      * Boolean: endpointIdの端末と通信の許可が取れているかどうか
@@ -237,7 +239,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
             Glide.with(this).load(R.raw.anim01_prompt_shuffle).into(target)
         }
         shuffleButton.setOnClickListener {
-            parentLogic.createHands()
+            parentLogic.createHands(cardMaxNumber)
 
             shuffleButton.visibility = View.GONE
             shufflingText.visibility = View.GONE
