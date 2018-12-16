@@ -179,9 +179,11 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
                         } else {
                             turnEndButton.isEnabled = true
                         }
-                        parentLogic.finishPlaying(endpointId)
+                        sendPayload(this@MainActivity,endpointId, ConnectionMessage.createStrRankMsg(parentLogic.finishPlaying(endpointId)))
                     } else if (message.receiverAction == ReceiverAction.DrawFinish) {
-                        parentLogic.finishPlaying(endpointId)
+                        sendPayload(this@MainActivity,endpointId, ConnectionMessage.createStrRankMsg(parentLogic.finishPlaying(endpointId)))
+                    } else if (message.receiverAction == ReceiverAction.Rank) {
+                        EventBus.getDefault().post(MessageEvent(message.rank))
                     }
                 }
             }
@@ -308,9 +310,16 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         cardsView.visibility = View.VISIBLE
     }
 
-    private fun goFinishView() {
+    private fun goFinishView(rank: Int) {
         cardsView.visibility = View.GONE
         finishedView.visibility = View.VISIBLE
+        if (rank == 1) {
+            rankText.text = rank.toString()
+        } else if (rank == parentLogic.playerInfoList.size) {
+            rankText.text = "ビリ"
+        } else {
+            rankText.text = rank.toString()
+        }
     }
 
 
@@ -413,11 +422,10 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
                 cardRecyclerView.adapter = cardAdapter
             } else {
                 if (isParent) {
-                    parentLogic.finishPlaying(ParentLogic.PARENT_ID)
+                    goFinishView(parentLogic.finishPlaying(ParentLogic.PARENT_ID))
                 } else {
                     sendPayload(this, childLogic.parentId, ConnectionMessage.createStrDrawFinishMsg())
                 }
-                goFinishView()
             }
             firstPosition = null
         } else {
@@ -435,6 +443,12 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         }
     }
 
+    // This method will be called when a MessageEvent is posted
+    @Subscribe
+    fun onRankEvent(event: RankEvent) {
+        goFinishView(event.rank)
+    }
+
     private fun setCardsList() {
         if (childLogic.sortCardList.size != 0) {
             val cardAdapter = CardAdapter(childLogic.sortCardList, this@MainActivity)
@@ -442,12 +456,11 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         } else {
             if (isParent) {
                 parentLogic.changeToNextTurn()
-                parentLogic.finishPlaying(ParentLogic.PARENT_ID)
+                goFinishView(parentLogic.finishPlaying(ParentLogic.PARENT_ID))
                 sendPayload(this@MainActivity, parentLogic.recievePlayer.id, ConnectionMessage.createStrYourTurnMsg())
             } else {
                 sendPayload(this, childLogic.parentId, ConnectionMessage.createStrDiscardFinishMsg())
             }
-            goFinishView()
         }
     }
 
