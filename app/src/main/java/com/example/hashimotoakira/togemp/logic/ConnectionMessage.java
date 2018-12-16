@@ -53,6 +53,7 @@ public class ConnectionMessage {
         DrawFinish,
         YourTurn,
         Rank,
+        YourLast
     }
 
     public static String createStrMsg(ReceiverAction receiverAction, List<Card> cardList) throws JsonProcessingException {
@@ -88,6 +89,12 @@ public class ConnectionMessage {
     public static String createStrRankMsg(int rank) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         ConnectionMessage msg = new ConnectionMessage(ReceiverAction.Rank, rank);
+        return mapper.writeValueAsString(msg);
+    }
+
+    public static String createStrYourLastMsg(int rank) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        ConnectionMessage msg = new ConnectionMessage(ReceiverAction.YourLast, rank);
         return mapper.writeValueAsString(msg);
     }
     

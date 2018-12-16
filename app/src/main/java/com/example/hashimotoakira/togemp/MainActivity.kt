@@ -180,8 +180,22 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
                             turnEndButton.isEnabled = true
                         }
                         sendPayload(this@MainActivity,endpointId, ConnectionMessage.createStrRankMsg(parentLogic.finishPlaying(endpointId)))
+                        if (parentLogic.notFinishPlayerIdList.size == 1) {
+                            if (parentLogic.notFinishPlayerIdList[0] != ParentLogic.PARENT_ID) {
+                                sendPayload(this@MainActivity, parentLogic.notFinishPlayerIdList[0], ConnectionMessage.createStrYourLastMsg(parentLogic.playerInfoList.size))
+                            } else {
+                                EventBus.getDefault().post(MessageEvent(message.rank))
+                            }
+                        }
                     } else if (message.receiverAction == ReceiverAction.DrawFinish) {
                         sendPayload(this@MainActivity,endpointId, ConnectionMessage.createStrRankMsg(parentLogic.finishPlaying(endpointId)))
+                        if (parentLogic.notFinishPlayerIdList.size == 1) {
+                            if (parentLogic.notFinishPlayerIdList[0] != ParentLogic.PARENT_ID) {
+                                sendPayload(this@MainActivity, parentLogic.notFinishPlayerIdList[0], ConnectionMessage.createStrYourLastMsg(parentLogic.playerInfoList.size))
+                            } else {
+                                EventBus.getDefault().post(MessageEvent(message.rank))
+                            }
+                        }
                     } else if (message.receiverAction == ReceiverAction.Rank) {
                         EventBus.getDefault().post(MessageEvent(message.rank))
                     }
