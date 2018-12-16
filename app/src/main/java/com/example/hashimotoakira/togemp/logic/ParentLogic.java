@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import static com.example.hashimotoakira.togemp.util.LOGKt.logD;
@@ -201,5 +202,13 @@ public class ParentLogic {
     public int getPlayerRank(String id) {
         PlayerInfo playerInfo = playerInfoList.stream().filter(info -> id.equals(info.getId())).findFirst().get();
         return playerInfo.getRank();
+    }
+
+    /**
+     * 終了していないプレイヤーのIDリストを取得する
+     * @return 終了していないプレイヤーのIDリスト
+     */
+    public List<String> getNotFinishPlayerIdList() {
+        return playerInfoList.stream().filter(info -> info.getRank() != 0).map(info -> info.getId()).collect(Collectors.toList());
     }
 }
