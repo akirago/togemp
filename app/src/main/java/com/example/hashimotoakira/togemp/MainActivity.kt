@@ -40,23 +40,23 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     }
 
     override fun onSensorChanged(event: SensorEvent?) {
-        if (event?.sensor?.type == Sensor.TYPE_ORIENTATION) {
-            if (cardsView.visibility == View.VISIBLE && isSender) {
-                if (event.values[SensorManager.DATA_Z] > 75) {
-                    val cardAdapter = CardAdapter(childLogic.sortCardList, this@MainActivity)
-                    cardRecyclerView.adapter = cardAdapter
-                } else {
-                    val backCards = mutableListOf<Card>()
-                    var count = 0
-                    while (count < childLogic.sortCardList.size) {
-                        backCards.add(Card("back", 0))
-                        count++
-                    }
-                    val cardAdapter = CardAdapter(backCards, this@MainActivity)
-                    cardRecyclerView.adapter = cardAdapter
-                }
-            }
-        }
+//        if (event?.sensor?.type == Sensor.TYPE_ORIENTATION) {
+//            if (cardsView.visibility == View.VISIBLE && isSender) {
+//                if (event.values[SensorManager.DATA_Z] > 75) {
+//                    val cardAdapter = CardAdapter(childLogic.sortCardList, this@MainActivity)
+//                    cardRecyclerView.adapter = cardAdapter
+//                } else {
+//                    val backCards = mutableListOf<Card>()
+//                    var count = 0
+//                    while (count < childLogic.sortCardList.size) {
+//                        backCards.add(Card("back", 0))
+//                        count++
+//                    }
+//                    val cardAdapter = CardAdapter(backCards, this@MainActivity)
+//                    cardRecyclerView.adapter = cardAdapter
+//                }
+//            }
+//        }
     }
 
     private var isParent = false
