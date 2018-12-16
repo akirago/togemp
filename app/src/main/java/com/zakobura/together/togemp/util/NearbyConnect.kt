@@ -1,4 +1,4 @@
-package com.example.hashimotoakira.togemp.util
+package com.zakobura.together.togemp.util
 
 import android.content.Context
 import com.google.android.gms.nearby.Nearby

@@ -1,4 +1,4 @@
-package com.example.hashimotoakira.togemp.logic;
+package com.zakobura.together.togemp.logic;
 
 import android.util.Pair;
 
@@ -6,10 +6,9 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
-import static com.example.hashimotoakira.togemp.util.LOGKt.logD;
+import static com.zakobura.together.togemp.util.LOGKt.logD;
 
 /**
  * 親が呼ぶロジック

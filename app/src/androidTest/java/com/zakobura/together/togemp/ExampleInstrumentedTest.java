@@ -1,4 +1,4 @@
-package com.example.hashimotoakira.togemp;
+package com.zakobura.together.togemp;
 
 import android.content.Context;
 import androidx.test.InstrumentationRegistry;

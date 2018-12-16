@@ -1,12 +1,10 @@
-package com.example.hashimotoakira.togemp.logic;
+package com.zakobura.together.togemp.logic;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * 子が呼ぶロジック

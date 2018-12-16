@@ -1,4 +1,4 @@
-package com.example.hashimotoakira.togemp
+package com.zakobura.together.togemp
 
 import android.Manifest
 import android.hardware.Sensor
@@ -12,13 +12,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.GlideDrawableImageViewTarget
-import com.example.hashimotoakira.togemp.logic.Card
-import com.example.hashimotoakira.togemp.logic.ChildLogic
-import com.example.hashimotoakira.togemp.logic.ConnectionMessage
-import com.example.hashimotoakira.togemp.logic.ConnectionMessage.ReceiverAction
-import com.example.hashimotoakira.togemp.logic.ConnectionMessage.createStrMsg
-import com.example.hashimotoakira.togemp.logic.ParentLogic
-import com.example.hashimotoakira.togemp.util.*
+import com.zakobura.together.togemp.logic.Card
+import com.zakobura.together.togemp.logic.ChildLogic
+import com.zakobura.together.togemp.logic.ConnectionMessage
+import com.zakobura.together.togemp.logic.ConnectionMessage.ReceiverAction
+import com.zakobura.together.togemp.logic.ConnectionMessage.createStrMsg
+import com.zakobura.together.togemp.logic.ParentLogic
+import com.zakobura.together.togemp.util.*
 import com.google.android.gms.nearby.Nearby
 import com.google.android.gms.nearby.connection.*
 import kotlinx.android.synthetic.main.activity_main.*

@@ -1,4 +1,4 @@
-package com.example.hashimotoakira.togemp.logic;
+package com.zakobura.together.togemp.logic;
 
 public class Hand {
     private Card card;

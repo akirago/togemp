@@ -1,18 +1,15 @@
-package com.example.hashimotoakira.togemp;
+package com.zakobura.together.togemp;
 
-import com.example.hashimotoakira.togemp.logic.Card;
-import com.example.hashimotoakira.togemp.logic.ChildLogic;
-import com.example.hashimotoakira.togemp.logic.ConnectionMessage;
-import com.example.hashimotoakira.togemp.logic.Hand;
-import com.example.hashimotoakira.togemp.logic.ParentLogic;
-import com.example.hashimotoakira.togemp.logic.PlayerInfo;
+import com.zakobura.together.togemp.logic.Card;
+import com.zakobura.together.togemp.logic.ChildLogic;
+import com.zakobura.together.togemp.logic.ParentLogic;
+import com.zakobura.together.togemp.logic.PlayerInfo;
 
 import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
 
 public class NoguchiUnitTest {
 

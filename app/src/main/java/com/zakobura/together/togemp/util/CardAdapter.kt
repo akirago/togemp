@@ -1,17 +1,15 @@
-package com.example.hashimotoakira.togemp.util
+package com.zakobura.together.togemp.util
 
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
-import com.example.hashimotoakira.togemp.R
-import com.example.hashimotoakira.togemp.logic.Card
+import com.zakobura.together.togemp.R
+import com.zakobura.together.togemp.logic.Card
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.view.View
-import com.example.hashimotoakira.togemp.logic.ChildLogic
 import org.greenrobot.eventbus.EventBus
 
 

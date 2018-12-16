@@ -1,4 +1,4 @@
-package com.example.hashimotoakira.togemp.logic;
+package com.zakobura.together.togemp.logic;
 
 import java.util.Arrays;
 import java.util.Collections;

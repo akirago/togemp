@@ -1,8 +1,8 @@
-package com.example.hashimotoakira.togemp;
+package com.zakobura.together.togemp;
 
-import com.example.hashimotoakira.togemp.logic.Card;
-import com.example.hashimotoakira.togemp.logic.ConnectionMessage;
-import com.example.hashimotoakira.togemp.logic.ParentLogic;
+import com.zakobura.together.togemp.logic.Card;
+import com.zakobura.together.togemp.logic.ConnectionMessage;
+import com.zakobura.together.togemp.logic.ParentLogic;
 
 import org.junit.Test;
 
