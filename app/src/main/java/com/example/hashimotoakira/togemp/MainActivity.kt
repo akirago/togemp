@@ -35,28 +35,36 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
 
     lateinit var sensorManager: SensorManager
 
+    var isHide: Boolean = false
+
     override fun onAccuracyChanged(p0: Sensor?, p1: Int) {
 
     }
 
     override fun onSensorChanged(event: SensorEvent?) {
-//        if (event?.sensor?.type == Sensor.TYPE_ORIENTATION) {
-//            if (cardsView.visibility == View.VISIBLE && isSender) {
-//                if (event.values[SensorManager.DATA_Z] > 75) {
-//                    val cardAdapter = CardAdapter(childLogic.sortCardList, this@MainActivity)
-//                    cardRecyclerView.adapter = cardAdapter
-//                } else {
-//                    val backCards = mutableListOf<Card>()
-//                    var count = 0
-//                    while (count < childLogic.sortCardList.size) {
-//                        backCards.add(Card("back", 0))
-//                        count++
-//                    }
-//                    val cardAdapter = CardAdapter(backCards, this@MainActivity)
-//                    cardRecyclerView.adapter = cardAdapter
-//                }
-//            }
-//        }
+        if (event?.sensor?.type == Sensor.TYPE_ORIENTATION) {
+            if (cardsView.visibility == View.VISIBLE && isSender) {
+                if (event.values[SensorManager.DATA_Z] > 75) {
+                    if (isHide) {
+                        val cardAdapter = CardAdapter(childLogic.sortCardList, this@MainActivity)
+                        cardRecyclerView.adapter = cardAdapter
+                        isHide = false
+                    }
+                } else {
+                    if (!isHide) {
+                        val backCards = mutableListOf<Card>()
+                        var count = 0
+                        while (count < childLogic.sortCardList.size) {
+                            backCards.add(Card("back", 0))
+                            count++
+                        }
+                        val cardAdapter = CardAdapter(backCards, this@MainActivity)
+                        cardRecyclerView.adapter = cardAdapter
+                        isHide = true
+                    }
+                }
+            }
+        }
     }
 
     private var isParent = false
@@ -137,7 +145,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
 
         override fun onPayloadReceived(endpointId: String, payload: Payload) {
             String(payload.asBytes()!!).also {
-                showToast(this@MainActivity, it)
+//                showToast(this@MainActivity, it)
                 logD("onPayloadReceived  $it")
                 if (it == "start") { // 親がコネクション完了通知で、子が子同士通信するためにrequestする流れ
                     logD("onPayloadReceived $endpointId")
@@ -180,25 +188,26 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
                             turnEndButton.isEnabled = true
                         }
                         sendPayload(this@MainActivity,endpointId, ConnectionMessage.createStrRankMsg(parentLogic.finishPlaying(endpointId)))
-                        if (parentLogic.notFinishPlayerIdList.size == 1) {
-                            if (parentLogic.notFinishPlayerIdList[0] != ParentLogic.PARENT_ID) {
-                                sendPayload(this@MainActivity, parentLogic.notFinishPlayerIdList[0], ConnectionMessage.createStrYourLastMsg(parentLogic.playerInfoList.size))
-                            } else {
-                                EventBus.getDefault().post(MessageEvent(message.rank))
-                            }
-                        }
+//                        if (parentLogic.notFinishPlayerIdList.size == 1) {
+//                            if (parentLogic.notFinishPlayerIdList[0] != ParentLogic.PARENT_ID) {
+//                                sendPayload(this@MainActivity, parentLogic.notFinishPlayerIdList[0], ConnectionMessage.createStrYourLastMsg(parentLogic.playerInfoList.size))
+//                            } else {
+//                                EventBus.getDefault().post(MessageEvent(message.rank))
+//                            }
+//                        }
                     } else if (message.receiverAction == ReceiverAction.DrawFinish) {
                         sendPayload(this@MainActivity,endpointId, ConnectionMessage.createStrRankMsg(parentLogic.finishPlaying(endpointId)))
-                        if (parentLogic.notFinishPlayerIdList.size == 1) {
-                            if (parentLogic.notFinishPlayerIdList[0] != ParentLogic.PARENT_ID) {
-                                sendPayload(this@MainActivity, parentLogic.notFinishPlayerIdList[0], ConnectionMessage.createStrYourLastMsg(parentLogic.playerInfoList.size))
-                            } else {
-                                EventBus.getDefault().post(MessageEvent(message.rank))
-                            }
-                        }
-                    } else if (message.receiverAction == ReceiverAction.Rank) {
-                        EventBus.getDefault().post(MessageEvent(message.rank))
+//                        if (parentLogic.notFinishPlayerIdList.size == 1) {
+//                            if (parentLogic.notFinishPlayerIdList[0] != ParentLogic.PARENT_ID) {
+//                                sendPayload(this@MainActivity, parentLogic.notFinishPlayerIdList[0], ConnectionMessage.createStrYourLastMsg(parentLogic.playerInfoList.size))
+//                            } else {
+//                                EventBus.getDefault().post(MessageEvent(message.rank))
+//                            }
+//                        }
                     }
+//                    else if (message.receiverAction == ReceiverAction.Rank) {
+//                        EventBus.getDefault().post(MessageEvent(message.rank))
+//                    }
                 }
             }
         }
@@ -324,16 +333,16 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         cardsView.visibility = View.VISIBLE
     }
 
-    private fun goFinishView(rank: Int) {
+    private fun goFinishView() {
         cardsView.visibility = View.GONE
         finishedView.visibility = View.VISIBLE
-        if (rank == 1) {
-            rankText.text = rank.toString()
-        } else if (rank == parentLogic.playerInfoList.size) {
-            rankText.text = "ビリ"
-        } else {
-            rankText.text = rank.toString()
-        }
+//        if (rank == 1) {
+//            rankText.text = rank.toString()
+//        } else if (rank == parentLogic.playerInfoList.size) {
+//            rankText.text = "ビリ"
+//        } else {
+//            rankText.text = rank.toString()
+//        }
     }
 
 
@@ -420,6 +429,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     // This method will be called when a MessageEvent is posted
     @Subscribe
     fun onMessageEvent(event: MessageEvent) {
+        logD("whydontmove onMessageEvent")
         logD("onMessageEvent  ${event.position}")
         if (isSender) {
             isSender = false
@@ -436,10 +446,11 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
                 cardRecyclerView.adapter = cardAdapter
             } else {
                 if (isParent) {
-                    goFinishView(parentLogic.finishPlaying(ParentLogic.PARENT_ID))
+                    parentLogic.finishPlaying(ParentLogic.PARENT_ID)
                 } else {
                     sendPayload(this, childLogic.parentId, ConnectionMessage.createStrDrawFinishMsg())
                 }
+                goFinishView()
             }
             firstPosition = null
         } else {
@@ -458,10 +469,10 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     }
 
     // This method will be called when a MessageEvent is posted
-    @Subscribe
-    fun onRankEvent(event: RankEvent) {
-        goFinishView(event.rank)
-    }
+//    @Subscribe
+//    fun onRankEvent(event: RankEvent) {
+////        goFinishView(event.rank)
+//    }
 
     private fun setCardsList() {
         if (childLogic.sortCardList.size != 0) {
@@ -470,11 +481,11 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         } else {
             if (isParent) {
                 parentLogic.changeToNextTurn()
-                goFinishView(parentLogic.finishPlaying(ParentLogic.PARENT_ID))
                 sendPayload(this@MainActivity, parentLogic.recievePlayer.id, ConnectionMessage.createStrYourTurnMsg())
             } else {
                 sendPayload(this, childLogic.parentId, ConnectionMessage.createStrDiscardFinishMsg())
             }
+            goFinishView()
         }
     }
 

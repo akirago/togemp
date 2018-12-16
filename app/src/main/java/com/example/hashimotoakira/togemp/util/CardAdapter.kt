@@ -31,6 +31,7 @@ class CardAdapter(val cardList: List<Card>, val context: Context) : RecyclerView
         val drawable = BitmapDrawable(context.resources, resizedBitmap)
         (holder.itemView as ImageView).setImageDrawable(drawable)
         holder.itemView.setOnClickListener{
+            logD("whydontmove setOnClickListener")
             EventBus.getDefault().post(MessageEvent(position))
         }
 //        holder.itemView.setBackgroundResource(imageId)
