@@ -263,7 +263,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
             val target = GlideDrawableImageViewTarget(dealingView)
             Glide.with(this).load(R.raw.anim04_deal).into(target)
 
-            // 2秒たったら次のViewへ
+            // 2.2秒たったら次のViewへ
             val runnable = Runnable {
                 var playerCount = 1
                 logD("dealButton  start")
@@ -288,7 +288,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
                     playerCount++
                 }
             }
-            Handler().postDelayed(runnable, 2000)
+            Handler().postDelayed(runnable, 2200)
         }
         turnEndButton.setOnClickListener {
             isSender = true

@@ -26,7 +26,6 @@
             android:background="@drawable/button_strong_style"
             android:text="部屋を作る"
             android:textColor="#fff"
-            android:textFontWeight="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/enterRoom"
             app:layout_constraintHorizontal_bias="0.5"
@@ -217,6 +216,9 @@
             android:layout_height="wrap_content"
             android:enabled="false"
             android:text="ターン終了"
+            android:background="@drawable/button_strong_style"
+            android:textColor="#fff"
+            android:layout_margin="10dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
