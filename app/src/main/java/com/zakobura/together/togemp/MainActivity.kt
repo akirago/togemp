@@ -7,11 +7,14 @@ import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.os.Bundle
 import android.os.Handler
-import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.GlideDrawableImageViewTarget
+import com.google.android.gms.nearby.Nearby
+import com.google.android.gms.nearby.connection.*
 import com.zakobura.together.togemp.logic.Card
 import com.zakobura.together.togemp.logic.ChildLogic
 import com.zakobura.together.togemp.logic.ConnectionMessage
@@ -19,8 +22,6 @@ import com.zakobura.together.togemp.logic.ConnectionMessage.ReceiverAction
 import com.zakobura.together.togemp.logic.ConnectionMessage.createStrMsg
 import com.zakobura.together.togemp.logic.ParentLogic
 import com.zakobura.together.togemp.util.*
-import com.google.android.gms.nearby.Nearby
-import com.google.android.gms.nearby.connection.*
 import kotlinx.android.synthetic.main.activity_main.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
@@ -37,31 +38,42 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
 
     var isHide: Boolean = false
 
+    private fun setCardsList() {
+        if (childLogic.sortCardList.size != 0) {
+            val cardAdapter = if (!isHide) {
+                CardAdapter(childLogic.sortCardList, this@MainActivity)
+            } else {
+                val backCards = mutableListOf<Card>()
+                var count = 0
+                while (count < childLogic.sortCardList.size) {
+                    backCards.add(Card("back", 0))
+                    count++
+                }
+                CardAdapter(backCards, this)
+            }
+            cardRecyclerView.adapter = cardAdapter
+        } else {
+            if (isParent) {
+                parentLogic.changeToNextTurn()
+                sendPayload(this@MainActivity, parentLogic.recievePlayer.id, ConnectionMessage.createStrYourTurnMsg())
+            } else {
+                sendPayload(this, childLogic.parentId, ConnectionMessage.createStrDiscardFinishMsg())
+            }
+            goFinishView()
+        }
+    }
+
     override fun onAccuracyChanged(p0: Sensor?, p1: Int) {
 
     }
 
     override fun onSensorChanged(event: SensorEvent?) {
         if (event?.sensor?.type == Sensor.TYPE_ORIENTATION) {
-            if (cardsView.visibility == View.VISIBLE && isSender) {
-                if (event.values[SensorManager.DATA_Z] > 75) {
-                    if (isHide) {
-                        val cardAdapter = CardAdapter(childLogic.sortCardList, this@MainActivity)
-                        cardRecyclerView.adapter = cardAdapter
-                        isHide = false
-                    }
-                } else {
-                    if (!isHide) {
-                        val backCards = mutableListOf<Card>()
-                        var count = 0
-                        while (count < childLogic.sortCardList.size) {
-                            backCards.add(Card("back", 0))
-                            count++
-                        }
-                        val cardAdapter = CardAdapter(backCards, this@MainActivity)
-                        cardRecyclerView.adapter = cardAdapter
-                        isHide = true
-                    }
+            if (cardsView.visibility == VISIBLE) {
+                val shouldBeHide = event.values[SensorManager.DATA_Z] < 45
+                if (isHide != shouldBeHide) {
+                    isHide = shouldBeHide
+                    setCardsList()
                 }
             }
         }
@@ -69,9 +81,9 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
 
     private var isParent = false
 
-//    private var participantNumber = 0
-
     private var connectedDeviceCount = 1
+
+    private var isGameStarted = false
 
     private val parentLogic = ParentLogic()
 
@@ -91,18 +103,19 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     private val endpointDiscoveryCallback = object : EndpointDiscoveryCallback() {
         override fun onEndpointFound(endpointId: String,
                                      discoveredEndpointInfo: DiscoveredEndpointInfo) {
-            // 端末を検出した
-            endpointIds.add(endpointId)
-            if (isParent) {
-                parentLogic.addPlayer(endpointId)
-                parentLogic.setPlayerPositionById(endpointId)
+            if (!isGameStarted) {// 端末を検出した
+                endpointIds.add(endpointId)
+                if (isParent) {
+                    parentLogic.addPlayer(endpointId)
+                    parentLogic.setPlayerPositionById(endpointId)
+                }
+                logD("onEndpointFound  endpointID = $endpointId")
+                requestConnection(
+                        this@MainActivity,
+                        packageName,
+                        endpointId,
+                        connectionLifecycleCallback)
             }
-            logD("onEndpointFound  endpointID = $endpointId")
-            requestConnection(
-                    this@MainActivity,
-                    packageName,
-                    endpointId,
-                    connectionLifecycleCallback)
         }
 
         override fun onEndpointLost(endpointId: String) {
@@ -130,7 +143,10 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
                 playerCount.text = connectedDeviceCount.toString()
                 if (connectedDeviceCount > 1) {
                     logD("connectionLifecycleCallback onConnectionResult sendPayload")
-                    nextButton.isEnabled = true
+                    nextButton.run {
+                        isEnabled = true
+                        alpha = 1F
+                    }
                 }
             }
         }
@@ -147,7 +163,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
 
         override fun onPayloadReceived(endpointId: String, payload: Payload) {
             String(payload.asBytes()!!).also {
-//                showToast(this@MainActivity, it)
+                //                showToast(this@MainActivity, it)
                 logD("onPayloadReceived  $it")
                 if (it == "start") { // 親がコネクション完了通知で、子が子同士通信するためにrequestする流れ
                     logD("onPayloadReceived $endpointId")
@@ -166,12 +182,11 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
 
                     if (message.receiverAction == ReceiverAction.DealCard) {
                         childLogic.createHands(message.cardList)
-                        goHandViewByChild()
+                        goHandViewForChild()
                         cardRecyclerView.let {
                             it.setHasFixedSize(true)
                             it.layoutManager = LinearLayoutManager(this@MainActivity, LinearLayoutManager.HORIZONTAL, false)
-                            val cardAdapter = CardAdapter(childLogic.sortCardList, this@MainActivity)
-                            it.adapter = cardAdapter
+                            setCardsList()
                         }
                     } else if (message.receiverAction == ReceiverAction.GetCard) {
                         childLogic.receiveCard(message.cardList)
@@ -179,37 +194,20 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
                         if (isParent) {
                             parentLogic.changeToNextTurn()
                         }
-                        turnEndButton.isEnabled = true
+                        enableEndButton()
                     } else if (message.receiverAction == ReceiverAction.YourTurn) {
-                        turnEndButton.isEnabled = true
+                        enableEndButton()
                     } else if (message.receiverAction == ReceiverAction.DiscardFinish) {
                         parentLogic.changeToNextTurn()
                         if (parentLogic.recievePlayer.id != ParentLogic.PARENT_ID) {
                             sendPayload(this@MainActivity, parentLogic.recievePlayer.id, ConnectionMessage.createStrYourTurnMsg())
                         } else {
-                            turnEndButton.isEnabled = true
+                            enableEndButton()
                         }
-                        sendPayload(this@MainActivity,endpointId, ConnectionMessage.createStrRankMsg(parentLogic.finishPlaying(endpointId)))
-//                        if (parentLogic.notFinishPlayerIdList.size == 1) {
-//                            if (parentLogic.notFinishPlayerIdList[0] != ParentLogic.PARENT_ID) {
-//                                sendPayload(this@MainActivity, parentLogic.notFinishPlayerIdList[0], ConnectionMessage.createStrYourLastMsg(parentLogic.playerInfoList.size))
-//                            } else {
-//                                EventBus.getDefault().post(MessageEvent(message.rank))
-//                            }
-//                        }
+                        sendPayload(this@MainActivity, endpointId, ConnectionMessage.createStrRankMsg(parentLogic.finishPlaying(endpointId)))
                     } else if (message.receiverAction == ReceiverAction.DrawFinish) {
-                        sendPayload(this@MainActivity,endpointId, ConnectionMessage.createStrRankMsg(parentLogic.finishPlaying(endpointId)))
-//                        if (parentLogic.notFinishPlayerIdList.size == 1) {
-//                            if (parentLogic.notFinishPlayerIdList[0] != ParentLogic.PARENT_ID) {
-//                                sendPayload(this@MainActivity, parentLogic.notFinishPlayerIdList[0], ConnectionMessage.createStrYourLastMsg(parentLogic.playerInfoList.size))
-//                            } else {
-//                                EventBus.getDefault().post(MessageEvent(message.rank))
-//                            }
-//                        }
+                        sendPayload(this@MainActivity, endpointId, ConnectionMessage.createStrRankMsg(parentLogic.finishPlaying(endpointId)))
                     }
-//                    else if (message.receiverAction == ReceiverAction.Rank) {
-//                        EventBus.getDefault().post(MessageEvent(message.rank))
-//                    }
                 }
             }
         }
@@ -220,9 +218,14 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         sensorManager = getSystemService(SENSOR_SERVICE) as SensorManager
+        selectBabaButton.setOnClickListener {
+            selectBabaButton.visibility = GONE
+            makeRoom.visibility = VISIBLE
+            enterRoom.visibility = VISIBLE
+        }
         makeRoom.setOnClickListener {
             isParent = true
-            turnEndButton.isEnabled = true
+            enableEndButton()
             parentLogic.addPlayer(ParentLogic.PARENT_ID)
             parentLogic.setPlayerPositionById(ParentLogic.PARENT_ID)
             startDiscoveryWithPermissionCheck(endpointDiscoveryCallback)
@@ -241,9 +244,9 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         shuffleButton.setOnClickListener {
             parentLogic.createHands(cardMaxNumber)
 
-            shuffleButton.visibility = View.GONE
-            shufflingText.visibility = View.GONE
-            shufflingView.visibility = View.VISIBLE
+            shuffleButton.visibility = GONE
+            shufflingText.visibility = GONE
+            shufflingView.visibility = VISIBLE
 
             val target = GlideDrawableImageViewTarget(shufflingView)
             Glide.with(this).load(R.raw.anim02_shuffle).into(target)
@@ -258,9 +261,9 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         }
         dealButton.setOnClickListener {
 
-            dealButton.visibility = View.GONE
-            dealingText.visibility = View.GONE
-            dealingView.visibility = View.VISIBLE
+            dealButton.visibility = GONE
+            dealingText.visibility = GONE
+            dealingView.visibility = VISIBLE
 
             val target = GlideDrawableImageViewTarget(dealingView)
             Glide.with(this).load(R.raw.anim04_deal).into(target)
@@ -277,8 +280,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
                             cardRecyclerView.let {
                                 it.setHasFixedSize(true)
                                 it.layoutManager = LinearLayoutManager(this@MainActivity, LinearLayoutManager.HORIZONTAL, false)
-                                val cardAdapter = CardAdapter(pair.second, this@MainActivity)
-                                it.adapter = cardAdapter
+                                setCardsList()
                                 goHandView()
                             }
                         } else {
@@ -294,7 +296,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         }
         turnEndButton.setOnClickListener {
             isSender = true
-            turnEndButton.isEnabled = false
+            disableEndButton()
             val backCards = mutableListOf<Card>()
             var count = 0
             while (count < childLogic.sortCardList.size) {
@@ -307,37 +309,39 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     }
 
     private fun goConnectingView() {
-        settingView.visibility = View.GONE
-        connectingView.visibility = View.VISIBLE
+        settingView.visibility = GONE
+        connectingView.visibility = VISIBLE
         if (isParent) {
-            nextButton.visibility = View.VISIBLE
-            playerCount.visibility = View.VISIBLE
+            nextButton.visibility = VISIBLE
+            playerCount.visibility = VISIBLE
         }
     }
 
     private fun goShufflingView() {
-        connectingView.visibility = View.GONE
-        shuffleView.visibility = View.VISIBLE
+        connectingView.visibility = GONE
+        shuffleView.visibility = VISIBLE
     }
 
     private fun goDealView() {
-        shuffleView.visibility = View.GONE
-        dealView.visibility = View.VISIBLE
+        shuffleView.visibility = GONE
+        dealView.visibility = VISIBLE
     }
 
     private fun goHandView() {
-        dealView.visibility = View.GONE
-        cardsView.visibility = View.VISIBLE
+        dealView.visibility = GONE
+        cardsView.visibility = VISIBLE
+        showToast(this, "あなたが最初に引かれる番です。手札を捨て終えたらターン終了を押してください。")
     }
 
-    private fun goHandViewByChild() {
-        connectingView.visibility = View.GONE
-        cardsView.visibility = View.VISIBLE
+    private fun goHandViewForChild() {
+        connectingView.visibility = GONE
+        cardsView.visibility = VISIBLE
+        showToast(this, "手札を捨てて下さい。また、プレイ中、カードを引いた後、引かれる準備ができたらターンエンドを押して下さい。")
     }
 
     private fun goFinishView() {
-        cardsView.visibility = View.GONE
-        finishedView.visibility = View.VISIBLE
+        cardsView.visibility = GONE
+        finishedView.visibility = VISIBLE
 //        if (rank == 1) {
 //            rankText.text = rank.toString()
 //        } else if (rank == parentLogic.playerInfoList.size) {
@@ -347,8 +351,19 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
 //        }
     }
 
+    private fun enableEndButton() {
+        turnEndButton.run {
+            isEnabled = true
+            alpha = 1.0F
+        }
+    }
 
-    // ここから下は基本触らない
+    private fun disableEndButton() {
+        turnEndButton.run {
+            isEnabled = false
+            alpha = 0.3F
+        }
+    }
 
     // RuntimePermission用
     // PermissionDispatcherの関係でActivityに入れてある
@@ -405,7 +420,9 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
                     logD("startDiscovery Succeeded")
                 }
                 .addOnFailureListener {
-                    logD("startDiscovery Failed")
+                    Handler().postDelayed({
+                        startDiscovery(endpointDiscoveryCallback)
+                    }, 2000)
                 }
     }
 
@@ -443,17 +460,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
             } else {
                 sendPayload(this, childLogic.parentId, msg)
             }
-            if (childLogic.sortCardList.size != 0) {
-                val cardAdapter = CardAdapter(childLogic.sortCardList, this@MainActivity)
-                cardRecyclerView.adapter = cardAdapter
-            } else {
-                if (isParent) {
-                    parentLogic.finishPlaying(ParentLogic.PARENT_ID)
-                } else {
-                    sendPayload(this, childLogic.parentId, ConnectionMessage.createStrDrawFinishMsg())
-                }
-                goFinishView()
-            }
+            setCardsList()
             firstPosition = null
         } else {
             if (firstPosition == null) {
@@ -475,20 +482,5 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
 //    fun onRankEvent(event: RankEvent) {
 ////        goFinishView(event.rank)
 //    }
-
-    private fun setCardsList() {
-        if (childLogic.sortCardList.size != 0) {
-            val cardAdapter = CardAdapter(childLogic.sortCardList, this@MainActivity)
-            cardRecyclerView.adapter = cardAdapter
-        } else {
-            if (isParent) {
-                parentLogic.changeToNextTurn()
-                sendPayload(this@MainActivity, parentLogic.recievePlayer.id, ConnectionMessage.createStrYourTurnMsg())
-            } else {
-                sendPayload(this, childLogic.parentId, ConnectionMessage.createStrDiscardFinishMsg())
-            }
-            goFinishView()
-        }
-    }
 
 }

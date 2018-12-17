@@ -7,6 +7,7 @@
     tools:context=".MainActivity"
     tools:layout_editor_absoluteY="73dp">
 
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/settingView"
         android:layout_width="match_parent"
@@ -20,12 +21,27 @@
             android:src="@drawable/screen_start" />
 
         <Button
+            android:id="@+id/selectBabaButton"
+            android:layout_width="160dp"
+            android:layout_height="56dp"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/button_strong_style"
+            android:text="ババ抜きをする"
+            android:textColor="#fff"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.798" />
+
+        <Button
             android:id="@+id/makeRoom"
             android:layout_width="160dp"
             android:layout_height="56dp"
             android:background="@drawable/button_strong_style"
             android:text="部屋を作る"
             android:textColor="#fff"
+            android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/enterRoom"
             app:layout_constraintHorizontal_bias="0.5"
@@ -39,6 +55,7 @@
             android:layout_height="56dp"
             android:background="@drawable/button_style"
             android:text="部屋に入る"
+            android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
@@ -105,6 +122,7 @@
                 android:layout_width="160dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="120dp"
+                android:alpha="0.3"
                 android:background="@drawable/button_strong_style"
                 android:enabled="false"
                 android:text="次へ"
@@ -214,11 +232,12 @@
             android:id="@+id/turnEndButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:background="@drawable/button_strong_style"
             android:enabled="false"
             android:text="ターン終了"
-            android:background="@drawable/button_strong_style"
+            android:alpha="0.3"
             android:textColor="#fff"
-            android:layout_margin="10dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
@@ -241,8 +260,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="あがり"
-                android:textSize="48sp"
-                android:textColor="#b01" />
+                android:textColor="#b01"
+                android:textSize="48sp" />
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -253,15 +272,17 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="72dp"
                     android:text="あなたは" />
+
                 <TextView
                     android:id="@+id/rankText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="72dp"
-                    android:textSize="24sp"
                     android:layout_marginLeft="4dp"
+                    android:layout_marginTop="72dp"
                     android:layout_marginRight="4dp"
-                    android:text="1" />
+                    android:text="1"
+                    android:textSize="24sp" />
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -292,6 +313,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="2">
+
             <ImageView
                 android:id="@+id/rankFinishView"
                 android:layout_width="match_parent"
